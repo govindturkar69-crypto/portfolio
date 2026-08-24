@@ -97,3 +97,22 @@ footer{background:#090a08;color:#f2f2ec}.contact span:nth-child(1),.contact span
 .site:not(.dark) .frame{mix-blend-mode:normal;color:#11120f}
 .site:not(.dark) footer .contact span:nth-child(1),.site:not(.dark) footer .contact span:nth-child(3){-webkit-text-stroke-color:#11120f}
 @media(max-width:700px){.hero-actions button{width:100%;min-height:48px}}
+/* Unified root theme contract — final audit */
+:root,[data-theme="light"]{--bg:#f4f4ef;--fg:#11120f;--surface:#fff;--surface-2:#e7e8e1;--muted:#5e6058;--line:#c4c6bd;--inverse:#11120f;--art:#e5e7df;--overlay:#f4f4eff2;--shadow:#11120f1f;color-scheme:light}
+html.dark,html[data-theme="dark"],[data-theme="dark"]{--bg:#090a08;--fg:#f1f2eb;--surface:#11130f;--surface-2:#181a15;--muted:#a7a99f;--line:#3a3d34;--inverse:#f1f2eb;--art:#161914;--overlay:#090a08f2;--shadow:#00000066;color-scheme:dark}
+html,body{background:var(--bg);color:var(--fg)}body{min-width:320px}
+.site,.site.dark{--dim:var(--muted);background:var(--bg);background-image:none;color:var(--fg)}
+.frame{color:var(--fg);mix-blend-mode:normal;background:linear-gradient(var(--bg),transparent);transition:color .3s,background .3s}.frame nav>*,.logo{background:var(--bg);color:var(--fg)}
+.hero,.system-map,.work,.profile,.github-section,footer{background:var(--bg)!important;color:var(--fg)!important}
+.hero .kinetic,.hero .availability{color:var(--fg)!important}.hero .philosophy,.hero .bio{color:var(--muted)!important}.kinetic span:before{color:var(--fg)}
+.kinetic span:last-child,.contact span:nth-child(1),.contact span:nth-child(3){color:transparent!important;-webkit-text-stroke-color:var(--fg)!important}
+.hero-console{background:var(--surface)!important;color:var(--fg)!important;border-color:var(--line)!important;box-shadow:18px 20px 0 var(--lime)}.hero-console>div{border-color:var(--line)}.hero-console p{color:var(--muted)}.hero-console p em{color:var(--fg)}
+.hero-index span{border-color:var(--line)}.hero-index span:first-child{color:#11120f}
+.hero-actions a,.hero-actions button{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 12px;background:var(--surface)!important;color:var(--fg)!important;border:1px solid var(--line)!important;cursor:pointer;transition:transform .18s,background .18s,color .18s,box-shadow .18s}.hero-actions .primary{background:var(--lime)!important;color:#11120f!important;border-color:var(--lime)!important;box-shadow:5px 5px 0 var(--fg)}.hero-actions a:hover,.hero-actions a:focus-visible{transform:translateY(-2px);box-shadow:4px 4px 0 var(--fg)}
+.intro,.manifesto,.stack{background:var(--surface-2)!important;color:var(--fg)!important}.intro .muted{color:var(--muted)}.intro em{text-decoration-color:var(--lime)}.sig{color:var(--fg);text-shadow:8px 8px 0 var(--lime)}.manifesto span:nth-child(2){color:var(--lime);text-shadow:5px 5px 0 var(--fg)}.stack .marquee i{color:var(--fg)}
+.system-flow>div{background:var(--surface)!important;color:var(--fg);border-color:var(--line)}.system-flow>div:hover{background:var(--lime)!important;color:#11120f}.system-flow>div:hover span,.system-flow>div:hover small{color:#303228}
+.project .canvas,.project .lime,.project .blue,.project .sand,.project .cyan,.project .olive,.project .rose{background:var(--art)!important;color:var(--fg);border-color:var(--line)}.window{background:var(--surface)!important;color:var(--fg)!important;border-color:var(--line)!important;box-shadow:-20px 24px 50px var(--shadow)}.bar{border-color:var(--line)}.lines i{background:var(--line)}.bar span,.window-main small,.window-main span{color:var(--muted)}.canvas:after{background:var(--inverse);color:var(--lime)}
+.section-label{background:var(--bg)}.record:hover,.repo-row:hover,.repo-row:focus-visible{background:var(--lime);color:#11120f}.repo-row:hover p,.record:hover p{color:#303228}
+.command-palette{background:var(--overlay)}.command-window{background:var(--surface);color:var(--fg);border-color:var(--lime)}.command-title,.command-input,.command-window nav a{border-color:var(--line)}.command-input,.command-foot{color:var(--muted)}
+.contact-mail:hover,.contact-mail:focus-visible{color:#11120f}a,button{touch-action:manipulation}[id]{scroll-margin-top:80px}main,section,article,footer{max-width:100%}
+@media(max-width:700px){.hero-actions{display:grid;grid-template-columns:1fr 1fr;width:auto}.hero-actions a,.hero-actions button{width:100%;font-size:8px}.frame nav{max-width:72vw;overflow-x:auto;scrollbar-width:none}.project-grid,.github-section,.work,.profile,footer{overflow-x:clip}}

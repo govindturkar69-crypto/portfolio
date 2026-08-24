@@ -133,3 +133,19 @@ html.dark,html[data-theme="dark"],[data-theme="dark"]{--hero-primary:#fff;--hero
 .hero-actions a{border:1px solid var(--hero-border)!important;box-shadow:var(--hero-elevation)!important}.hero-actions .primary{box-shadow:var(--hero-elevation)!important}
 .hero-actions a:hover,.hero-actions a:focus-visible,.hero-actions .primary:hover{transform:translateY(-2px)!important;box-shadow:var(--hero-elevation-hover)!important}.hero-actions a:active{transform:translateY(0)!important;box-shadow:none!important}
 @media(max-width:640px){.hero-console{transform:none!important;box-shadow:var(--hero-elevation)!important}}
+/* Razor-sharp typography — zero shadows, blur, fades, or ghost text */
+*,*::before,*::after{text-shadow:none!important}
+h1,h2,h3,h4,h5,h6,p,a,button,span,small,strong,b,em,li,label{opacity:1;text-shadow:none!important}
+.hero-console,.command-palette{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.kinetic span::before,.project::before,.github-section::before{display:none!important;content:none!important}
+.kinetic span:last-child,.contact span:nth-child(1),.contact span:nth-child(3),.profile-title h2{color:var(--fg)!important;-webkit-text-stroke:0!important}
+.kinetic span:nth-child(2){color:var(--lime)!important}
+.sig,.manifesto span:nth-child(2){text-shadow:none!important}
+.hero .kinetic,.hero .discipline,.hero .availability,.hero-console p em{color:var(--hero-primary)!important;opacity:1}
+.hero .discipline{color:var(--lime)!important}
+.hero .philosophy,.hero .bio,.hero-console p,.hero-console>div span,.hero-index{color:var(--hero-secondary)!important;opacity:1}
+.hero-console .console-live b{animation:none!important;opacity:1}
+.logo span{opacity:1}
+html[data-theme="dark"]{--hero-primary:#fff;--hero-secondary:#a1a1aa}
+html[data-theme="light"]{--hero-primary:#18181b;--hero-secondary:#52525b}
+.cursor:not(.active) span{opacity:0!important}.cursor.active span{opacity:1!important}

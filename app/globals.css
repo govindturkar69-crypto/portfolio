@@ -149,3 +149,11 @@ h1,h2,h3,h4,h5,h6,p,a,button,span,small,strong,b,em,li,label{opacity:1;text-shad
 html[data-theme="dark"]{--hero-primary:#fff;--hero-secondary:#a1a1aa}
 html[data-theme="light"]{--hero-primary:#18181b;--hero-secondary:#52525b}
 .cursor:not(.active) span{opacity:0!important}.cursor.active span{opacity:1!important}
+
+/* Flat hero cleanup requested from visual review */
+.cursor{display:none!important}
+body,body a,body button{cursor:auto!important}
+.hero::before,.hero::after{display:none!important;content:none!important}
+.hero-console,.hero-actions a,.hero-actions .primary,.hero-actions a:hover,.hero-actions a:focus-visible{box-shadow:none!important}
+.hero-console{border-color:var(--hero-border)!important}
+.hero{background-image:none!important}

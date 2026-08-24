@@ -162,3 +162,6 @@ body,body a,body button{cursor:auto!important}
 .frame,.frame *{text-shadow:none!important;box-shadow:none!important;filter:none!important;opacity:1!important;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
 .frame a,.frame button,.logo,.logo span{color:var(--fg)!important}
 .frame .command-trigger{color:var(--lime)!important}
+/* Header visibility fix: frame spans viewport, so it must stay transparent */
+.frame{background:transparent!important;background-image:none!important}
+.frame>div:first-child{background:var(--bg);padding:4px 8px;margin:-4px -8px}

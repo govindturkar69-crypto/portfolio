@@ -157,3 +157,8 @@ body,body a,body button{cursor:auto!important}
 .hero-console,.hero-actions a,.hero-actions .primary,.hero-actions a:hover,.hero-actions a:focus-visible{box-shadow:none!important}
 .hero-console{border-color:var(--hero-border)!important}
 .hero{background-image:none!important}
+/* Flat header typography — no upper shadow or ghost edge */
+.frame{background:var(--bg)!important;background-image:none!important;box-shadow:none!important;filter:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;mix-blend-mode:normal!important}
+.frame,.frame *{text-shadow:none!important;box-shadow:none!important;filter:none!important;opacity:1!important;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+.frame a,.frame button,.logo,.logo span{color:var(--fg)!important}
+.frame .command-trigger{color:var(--lime)!important}

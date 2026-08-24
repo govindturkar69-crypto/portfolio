@@ -82,3 +82,18 @@ footer{background:#090a08;color:#f2f2ec}.contact span:nth-child(1),.contact span
 @media(max-width:900px){.hero-console{right:5%;width:38vw}.hero-index{display:none}.command-trigger{display:none}.system-flow>div:nth-of-type(even){transform:none}}
 @media(max-width:640px){.hero{min-height:112svh;padding-bottom:95px}.hero-console{top:235px;left:16px;right:16px;width:auto;transform:rotate(1deg);box-shadow:9px 9px 0 var(--lime);font-size:7px}.hero .bio{margin-bottom:235px}.hero .kinetic{font-size:12vw;line-height:.77}.hero-actions{bottom:44px}.availability{top:137px}.intro{clip-path:polygon(0 35px,100% 0,100% calc(100% - 35px),0 100%);padding-block:145px}.project-open:hover .canvas{box-shadow:none}.section-label{top:45px}.manifesto{margin-block:80px}.command-window{box-shadow:8px 8px 0 var(--lime)}.command-window nav b{font-size:24px}.repo-row:hover{transform:none}}
 @media(prefers-reduced-motion:reduce){.hero-console .console-live b,.kinetic span:hover:before{animation:none}.system-flow>div:nth-of-type(even){transform:none}.manifesto,.manifesto span,.stack{transform:none}.command-palette{animation:none}}
+
+/* Interaction reliability: complete theme coverage + email CTA */
+.hero-actions button{font:inherit;cursor:pointer}
+.copy-status{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.site,.hero,.system-map,footer,.hero-console,.system-flow>div{transition:background-color .35s ease,color .35s ease,border-color .35s ease}
+.site:not(.dark) .hero,.site:not(.dark) .system-map,.site:not(.dark) footer{background:#f2f2ed;color:#11120f}
+.site:not(.dark) .hero .kinetic{color:#11120f!important}
+.site:not(.dark) .hero .kinetic span:last-child{-webkit-text-stroke-color:#11120f}
+.site:not(.dark) .hero-console{background:#f2f2ed;color:#11120f;border-color:#11120f55}
+.site:not(.dark) .hero-console p em{color:#11120f}
+.site:not(.dark) .hero-actions a,.site:not(.dark) .hero-actions button{background:#f2f2ed;color:#11120f;border-color:#11120f66}
+.site:not(.dark) .system-flow>div{background:#e5e6df}
+.site:not(.dark) .frame{mix-blend-mode:normal;color:#11120f}
+.site:not(.dark) footer .contact span:nth-child(1),.site:not(.dark) footer .contact span:nth-child(3){-webkit-text-stroke-color:#11120f}
+@media(max-width:700px){.hero-actions button{width:100%;min-height:48px}}

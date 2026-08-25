@@ -321,10 +321,20 @@ a,button{touch-action:manipulation}.assistant-panel form button:disabled{opacity
 .record-logo.college-mark{padding:6px}
 .record-logo.college-mark img{width:auto;max-width:100%}
 @media(max-width:640px){.record{display:grid;grid-template-columns:64px minmax(0,1fr)!important;gap:16px!important}.record>span{grid-column:1/-1;margin-bottom:4px!important}.record-logo{width:64px;height:56px;padding:8px}.record>div{min-width:0}.company-link{line-height:1.15}}
-/* Verified secondary education timeline */
-.school-record{align-items:start}
-.record-monogram{display:flex;flex-direction:column;align-items:center;justify-content:center;width:84px;height:64px;background:var(--surface-2);color:var(--fg);border:1px solid var(--line);font:700 17px/1 var(--sans);letter-spacing:-.04em}
-.record-monogram small{margin-top:6px;color:var(--lime);font:8px/1 var(--mono);letter-spacing:.08em}
-.record:hover .record-monogram{background:#fff;color:#11120f;border-color:#11120f}
-.record:hover .record-monogram small{color:#11120f}
-@media(max-width:640px){.record-monogram{width:64px;height:56px;font-size:14px}}
+/* Premium secondary education timeline */
+.school-record{grid-template-columns:minmax(110px,2fr) minmax(0,7fr);align-items:stretch}
+.school-year{display:flex;flex-direction:column;gap:8px;padding-top:18px!important;font:700 18px/1 var(--sans)!important}
+.school-year small{color:var(--muted);font:8px/1 var(--mono);letter-spacing:.12em}
+.school-card{position:relative;overflow:hidden;padding:24px 26px 22px;border:1px solid var(--line);background:var(--surface);transition:transform .25s,border-color .25s}
+.school-card:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--lime)}
+.school-card-head{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:18px}
+.school-card-head>span{font:9px var(--mono);letter-spacing:.1em;color:var(--muted)}
+.school-card-head strong{padding:7px 10px;background:var(--lime);color:#11120f;font:800 15px var(--sans)}
+.school-card>b{display:block;font-size:clamp(16px,1.7vw,24px);line-height:1.1}
+.school-card>p{margin:9px 0 18px;color:var(--muted)}
+.score-track{height:3px;background:var(--line);overflow:hidden}
+.score-track i{display:block;height:100%;background:var(--lime);transform-origin:left;transition:width .5s}
+.school-record:hover{background:transparent!important;color:var(--fg)!important}
+.school-record:hover .school-card{transform:translateX(5px);border-color:var(--lime)}
+.school-record:hover .school-card p{color:var(--muted)}
+@media(max-width:640px){.school-record{grid-template-columns:1fr!important}.school-year{padding-top:0!important}.school-card{padding:20px 18px}.school-record>span{grid-column:auto!important}.school-card-head{align-items:flex-start}.school-card>b{font-size:17px}}

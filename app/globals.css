@@ -272,3 +272,20 @@ section.hero .scroll{bottom:31px}
  .project-grid .project ul{display:flex;width:100%;gap:6px;margin:0;padding:0;overflow:visible}
  .project-grid .links{display:flex;width:100%;flex-wrap:wrap;gap:8px;margin-top:20px}
 }
+/* Recruiter snapshot + accessible mobile navigation */
+.mobile-toggle{display:none;border:0;background:transparent;color:var(--fg);padding:8px;font:9px var(--mono);cursor:pointer;pointer-events:auto}
+.recruiter-brief{display:grid;grid-template-columns:5fr 5fr 2fr;gap:32px;padding:72px 56px 110px;border-block:1px solid var(--line);background:var(--bg);color:var(--fg)}
+.recruiter-brief>div:first-child{display:flex;flex-direction:column;gap:28px}.recruiter-brief small,.recruiter-brief dt{font:8px var(--mono);color:var(--muted)}
+.recruiter-brief strong{max-width:760px;font-size:clamp(26px,3.2vw,54px);line-height:1.02;letter-spacing:-.045em}
+.recruiter-brief dl{display:grid;gap:0;margin:0;border-top:1px solid var(--line)}.recruiter-brief dl>div{display:grid;grid-template-columns:90px 1fr;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}.recruiter-brief dd{margin:0;font:10px/1.5 var(--mono)}
+.brief-actions{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:8px}.brief-actions a{padding:9px 0;border-bottom:1px solid var(--line);font:8px var(--mono)}.brief-actions a:hover{border-color:var(--lime)}
+@media(max-width:900px){.recruiter-brief{grid-template-columns:1fr 1fr;padding:64px 24px 90px}.brief-actions{grid-column:1/-1;flex-direction:row}}
+@media(max-width:640px){
+ .frame>div:first-child{position:relative;z-index:2;width:100%}.mobile-toggle{display:block;margin-left:auto}
+ .frame nav{position:fixed;inset:0;z-index:-1;display:flex!important;flex-direction:column;justify-content:center;align-items:stretch;gap:0;max-width:none!important;padding:88px 18px 80px;background:var(--bg);color:var(--fg);opacity:0;visibility:hidden;transform:translateY(-12px);transition:opacity .25s,transform .25s,visibility .25s;pointer-events:none;overflow-y:auto}
+ .frame nav.nav-open{opacity:1;visibility:visible;transform:none;pointer-events:auto}
+ .frame nav>*{display:flex!important;width:100%;justify-content:space-between;padding:15px 6px!important;border-bottom:1px solid var(--line)!important;font-size:clamp(18px,6vw,30px)!important;text-align:left}
+ .frame nav>*:after{content:'↗';position:static;border:0}.frame nav button:last-child{display:none!important}
+ .frame>div:last-child{z-index:2}.recruiter-brief{display:block;padding:58px 16px 76px}.recruiter-brief>div:first-child{gap:20px}.recruiter-brief strong{font-size:29px}.recruiter-brief dl{margin-top:50px}.recruiter-brief dl>div{display:block;padding:15px 0}.recruiter-brief dt{margin-bottom:7px}.recruiter-brief dd{font-size:9px}.brief-actions{display:flex;margin-top:30px;gap:16px}
+}
+@media(prefers-reduced-motion:reduce){.frame nav{transition:none}}

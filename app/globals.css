@@ -338,3 +338,23 @@ a,button{touch-action:manipulation}.assistant-panel form button:disabled{opacity
 .school-record:hover .school-card{transform:translateX(5px);border-color:var(--lime)}
 .school-record:hover .school-card p{color:var(--muted)}
 @media(max-width:640px){.school-record{grid-template-columns:1fr!important}.school-year{padding-top:0!important}.school-card{padding:20px 18px}.school-record>span{grid-column:auto!important}.school-card-head{align-items:flex-start}.school-card>b{font-size:17px}}
+/* Full-stack positioning and engineering capabilities */
+.capabilities{padding:130px 56px 170px;background:var(--surface-2);color:var(--fg);border-block:1px solid var(--line)}
+.capabilities-head{display:grid;grid-template-columns:7fr 5fr;gap:48px;align-items:end;margin-bottom:82px}
+.capabilities-head small{font:8px var(--mono);color:var(--muted)}
+.capabilities-head h2{margin:28px 0 0;font-size:clamp(48px,7vw,112px);line-height:.82;letter-spacing:-.065em}
+.capabilities-head>p{max-width:560px;margin:0 0 4px;font-size:clamp(18px,2vw,30px);line-height:1.18;color:var(--muted)}
+.capability-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line);border-left:1px solid var(--line)}
+.capability-grid article{min-height:260px;display:flex;flex-direction:column;padding:24px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface);transition:background .24s,color .24s,transform .24s}
+.capability-grid article:hover{background:var(--lime);color:#11120f;transform:translateY(-4px)}
+.capability-grid article>small{font:8px var(--mono);color:var(--muted)}
+.capability-grid article h3{margin:48px 0 14px;font-size:clamp(20px,2.2vw,34px);line-height:.95;letter-spacing:-.04em}
+.capability-grid article p{margin:0 0 28px;font-size:13px;line-height:1.55;color:var(--muted)}
+.capability-grid article>span{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);font:8px var(--mono)}
+.capability-grid article:hover>small,.capability-grid article:hover p{color:#303228}
+.capability-grid article:hover>span{border-color:#11120f55}
+.hero-actions{flex-wrap:wrap}
+.recruiter-brief dl>div{grid-template-columns:104px 1fr}
+@media(max-width:900px){.capabilities{padding:100px 24px 130px}.capabilities-head{grid-template-columns:1fr;gap:30px}.capability-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.capabilities{padding:82px 16px 100px}.capabilities-head{margin-bottom:50px}.capabilities-head h2{font-size:14vw}.capabilities-head>p{font-size:19px}.capability-grid{grid-template-columns:1fr}.capability-grid article{min-height:220px}.hero-actions{gap:10px 16px!important}.hero-actions a{white-space:nowrap}}
+@media(prefers-reduced-motion:reduce){.capability-grid article{transition:none}.capability-grid article:hover{transform:none}}

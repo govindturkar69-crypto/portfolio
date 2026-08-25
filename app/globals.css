@@ -289,3 +289,21 @@ section.hero .scroll{bottom:31px}
  .frame>div:last-child{z-index:2}.recruiter-brief{display:block;padding:58px 16px 76px}.recruiter-brief>div:first-child{gap:20px}.recruiter-brief strong{font-size:29px}.recruiter-brief dl{margin-top:50px}.recruiter-brief dl>div{display:block;padding:15px 0}.recruiter-brief dt{margin-bottom:7px}.recruiter-brief dd{font-size:9px}.brief-actions{display:flex;margin-top:30px;gap:16px}
 }
 @media(prefers-reduced-motion:reduce){.frame nav{transition:none}}
+/* Final responsive, accessibility, and interaction safeguards */
+html{scroll-padding-top:84px}section[id],footer[id]{scroll-margin-top:72px}
+a,button{touch-action:manipulation}.assistant-panel form button:disabled{opacity:.45!important}
+@media(max-width:900px){
+ .mobile-toggle{display:block;margin-left:auto}
+ .frame>div:first-child{position:relative;z-index:2;width:100%}
+ .frame nav{position:fixed;inset:0;z-index:-1;display:flex!important;flex-direction:column;justify-content:center;align-items:stretch;gap:0;max-width:none!important;padding:88px 24px 80px;background:var(--bg);color:var(--fg);opacity:0!important;visibility:hidden;transform:translateY(-12px);transition:opacity .25s,transform .25s,visibility .25s;pointer-events:none;overflow-y:auto;overscroll-behavior:contain}
+ .frame nav.nav-open{opacity:1!important;visibility:visible;transform:none;pointer-events:auto}
+ .frame nav>*{display:flex!important;width:100%;min-height:46px;justify-content:space-between;align-items:center;padding:12px 6px!important;border-bottom:1px solid var(--line)!important;font-size:clamp(17px,3.5vw,28px)!important;text-align:left}
+ .frame nav>*:after{content:'↗';position:static;border:0}.frame nav button:last-child{display:none!important}
+ .frame:has(nav.nav-open)~.assistant{opacity:0;visibility:hidden;pointer-events:none}
+}
+@media(max-width:640px){
+ .frame nav{padding-inline:18px}.frame nav>*{font-size:clamp(18px,6vw,30px)!important}
+ .foot{bottom:44px}.foot>div{justify-content:flex-start!important;flex-wrap:wrap!important;gap:4px 8px!important}.foot a{font-size:7px!important;padding:7px 5px!important}
+ .brief-actions{flex-wrap:wrap}.assistant-launch{min-width:44px;min-height:44px}.assistant-panel header button,.assistant-panel form button{min-width:40px;min-height:40px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.frame nav{transition:none!important}}

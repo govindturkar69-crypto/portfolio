@@ -307,3 +307,9 @@ a,button{touch-action:manipulation}.assistant-panel form button:disabled{opacity
  .brief-actions{flex-wrap:wrap}.assistant-launch{min-width:44px;min-height:44px}.assistant-panel header button,.assistant-panel form button{min-width:40px;min-height:40px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.frame nav{transition:none!important}}
+/* Official company link */
+.company-link{display:inline-flex;align-items:center;gap:8px;width:fit-content;border-bottom:1px solid transparent;transition:color .18s,border-color .18s,transform .18s}
+.company-link>span{font:12px var(--mono);color:var(--lime);transition:transform .18s}
+.company-link:hover,.company-link:focus-visible{border-color:currentColor;transform:translateY(-1px)}
+.company-link:hover>span,.company-link:focus-visible>span{transform:translate(2px,-2px)}
+.record:hover .company-link>span{color:#11120f}

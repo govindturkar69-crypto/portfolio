@@ -313,3 +313,11 @@ a,button{touch-action:manipulation}.assistant-panel form button:disabled{opacity
 .company-link:hover,.company-link:focus-visible{border-color:currentColor;transform:translateY(-1px)}
 .company-link:hover>span,.company-link:focus-visible>span{transform:translate(2px,-2px)}
 .record:hover .company-link>span{color:#11120f}
+/* Official experience and education marks */
+.record{grid-template-columns:minmax(110px,2fr) 84px minmax(0,7fr);gap:24px;align-items:start}
+.record-logo{display:flex;align-items:center;justify-content:center;width:84px;height:64px;padding:10px;background:#fff;border:1px solid var(--line);overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s}
+.record-logo img{display:block;width:100%;height:100%;object-fit:contain}
+.record-logo:hover,.record-logo:focus-visible{transform:translateY(-3px);border-color:var(--lime);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.record-logo.college-mark{padding:6px}
+.record-logo.college-mark img{width:auto;max-width:100%}
+@media(max-width:640px){.record{display:grid;grid-template-columns:64px minmax(0,1fr)!important;gap:16px!important}.record>span{grid-column:1/-1;margin-bottom:4px!important}.record-logo{width:64px;height:56px;padding:8px}.record>div{min-width:0}.company-link{line-height:1.15}}

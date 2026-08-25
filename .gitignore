@@ -1,6 +1,9 @@
 node_modules/
 .next/
 dist/
+.vinext/
+.wrangler/
+.pnpm-store/
 *.tar.gz
 .env*
 !.env.example

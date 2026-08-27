@@ -358,3 +358,178 @@ a,button{touch-action:manipulation}.assistant-panel form button:disabled{opacity
 @media(max-width:900px){.capabilities{padding:100px 24px 130px}.capabilities-head{grid-template-columns:1fr;gap:30px}.capability-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.capabilities{padding:82px 16px 100px}.capabilities-head{margin-bottom:50px}.capabilities-head h2{font-size:14vw}.capabilities-head>p{font-size:19px}.capability-grid{grid-template-columns:1fr}.capability-grid article{min-height:220px}.hero-actions{gap:10px 16px!important}.hero-actions a{white-space:nowrap}}
 @media(prefers-reduced-motion:reduce){.capability-grid article{transition:none}.capability-grid article:hover{transform:none}}
+
+/* 2026 editorial direction: close study of haoqi.design, adapted to Govind's work. */
+:root{
+ --lime:#c0fe04;
+ --ink:#000;
+ --paper:#fbfaf4;
+ --dim:rgba(54,54,48,.62);
+ --line:rgba(54,54,48,.1);
+ --surface:#efede7;
+ --surface-2:#f4f2ec;
+ --ease-editorial:cubic-bezier(.66,0,.01,1);
+}
+.site.dark{
+ --bg:#0f1111;
+ --fg:#fff;
+ --dim:rgba(230,232,232,.62);
+ --line:rgba(230,232,232,.09);
+ --surface:#191b1b;
+ --surface-2:#121414;
+}
+html,body{scrollbar-width:none}
+html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
+::selection{background:var(--lime);color:#000}
+.frame{padding:20px 56px 26px;font-family:var(--mono);font-size:10px}
+.frame>div:first-child{padding:0;margin:0;background:transparent}
+.logo{font-size:17px;text-transform:uppercase}
+.frame nav{width:min(54%,720px);justify-content:space-between}
+.frame nav>*{text-transform:uppercase}
+section.hero{
+ padding:96px 56px 28px!important;
+ grid-template-rows:auto minmax(0,1fr) auto;
+ row-gap:24px;
+}
+section.hero .discipline{font-size:clamp(24px,2vw,34px);line-height:.9;text-transform:uppercase}
+section.hero .philosophy,section.hero .bio{font-size:11px;line-height:1.55}
+section.hero .availability{top:168px;font-size:8px;letter-spacing:.08em}
+section.hero .kinetic{
+ font-size:clamp(58px,7.2svw,138px)!important;
+ line-height:.775!important;
+ letter-spacing:-.072em!important;
+ font-weight:900;
+ text-transform:uppercase;
+}
+section.hero .kinetic span{transform-origin:left bottom}
+section.hero .kinetic span:nth-child(2){color:var(--lime)!important}
+.hero-actions a{font-size:8px!important;text-transform:uppercase}
+.scroll{font-size:8px}
+@media(max-width:900px){
+ .frame{padding:14px 24px 22px}
+ .frame nav{width:auto}
+ section.hero{padding:88px 24px 24px!important}
+}
+@media(max-width:640px){
+ .frame{padding:10px 16px 18px}
+ section.hero{padding:82px 16px 22px!important}
+ section.hero .kinetic{font-size:12.2vw!important}
+ section.hero .availability{top:134px}
+}
+
+
+/* Haoqi motion and composition layer — authentic Govind content, original implementation. */
+.site{--surface:#efede7;--surface-2:#f5f3ed;--overlay:#000c}
+.site.dark{--surface:#191b1b;--surface-2:#121414;--overlay:#000d}
+html,body{scrollbar-width:none}
+html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
+::selection{background:var(--lime);color:#000}
+.frame nav{width:min(54%,720px);justify-content:space-between}
+.frame nav>*{text-transform:uppercase}
+.reveal{transition:opacity .7s,transform .9s cubic-bezier(.16,1,.3,1)}
+.reveal.on{opacity:1;transform:none}
+
+/* Minimal asymmetric project gallery */
+.work{padding-top:92px}
+.section-label{margin-bottom:108px}
+.project-grid{gap:132px 16px}
+.project.hero{grid-column:5/-1}
+.project.wide{grid-column:1/span 7}
+.project.wide.right{grid-column:7/-1}
+.project.medium{grid-column:1/span 5}
+.project.small{grid-column:6/span 4}
+.project.small.last{grid-column:10/-1}
+.project.hero .canvas,.canvas{aspect-ratio:1}
+.canvas{isolation:isolate;padding:16px;color:#0f1111;outline:1px solid transparent;outline-offset:4px;transition:outline-color .2s}
+.canvas::before{content:""!important;display:block!important;position:absolute;z-index:0;left:50%;top:50%;width:72%;aspect-ratio:1;border:1px solid #10110e35;border-radius:50%;transform:translate(-50%,-50%);animation:art-orbit 14s linear infinite}
+.canvas::after{content:""!important;display:block!important;position:absolute;z-index:5;left:0;right:0;top:-1px;height:1px;background:#fff9;pointer-events:none;animation:art-scan 5.6s ease-in-out infinite}
+.project:nth-child(even) .canvas::before{width:54%;border-radius:0;animation-direction:reverse}
+.canvas-meta{position:relative;z-index:6}
+.project-status{margin-left:auto;padding:2px 5px;border:1px solid #10110e55}
+.project-status.is-live::before{content:"● ";color:#13752c}
+.window{z-index:3;animation:art-float 7s ease-in-out infinite;transition:transform .75s cubic-bezier(.16,1,.3,1)}
+.project:nth-child(2n) .window{left:14%;right:5%;top:13%;transform:rotate(-2deg);animation-delay:-2s}
+.project:nth-child(3n) .window{left:7%;right:12%;top:21%;transform:rotate(1.5deg);animation-delay:-4s}
+.project-open:hover .window,.project-open:focus-visible .window{animation-play-state:paused;transform:translate(-9px,-13px) rotate(0)!important}
+.project-open:hover .canvas,.project-open:focus-visible .canvas{transform:none!important;filter:none!important;outline-color:var(--fg)}
+.project-title{padding-top:14px}
+.project-title h2{font-size:clamp(24px,2.9vw,50px)}
+.project-title span{font-size:8px}
+.proof{margin:13px 0 0;padding:0;border:0;color:var(--muted);font-size:8px}
+.project .case,.project>ul{display:none}
+.project .links{margin-top:15px}
+.project .links>*{padding:8px;background:transparent;font-size:8px}
+.project .links>*:hover{color:var(--lime)}
+@keyframes art-orbit{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes art-scan{0%,10%{top:-1px;opacity:0}25%,80%{opacity:.75}95%,100%{top:100%;opacity:0}}
+@keyframes art-float{0%,100%{translate:0 0}50%{translate:0 -9px}}
+
+/* Purpose statement becomes a full-screen editorial pause */
+.manifesto{position:sticky;top:0;z-index:0;min-height:100svh;margin:60px 0 100px;background:var(--bg)}
+.profile,.stack,.github-section,.recruiter-cta,footer{position:relative;z-index:1}
+
+/* Clean capability and profile rhythm */
+.capabilities{background:var(--surface-2)}
+.capability-grid article{background:transparent;transition:background .25s,color .25s,transform .45s cubic-bezier(.16,1,.3,1)}
+.capability-grid article:hover{background:var(--lime);color:#000;transform:translateY(-6px)}
+.capability-grid article:hover>small,.capability-grid article:hover p{color:#303228}
+.record{transition:background .25s,color .25s,padding .4s cubic-bezier(.16,1,.3,1)}
+.record:hover{padding-inline:18px;background:var(--lime);color:#000}
+.record:hover p{color:#303228}
+.record-logo{box-shadow:none!important}
+.stack{background:var(--lime);color:#090a08;transform:rotate(-.7deg) scale(1.01)}
+.marquee i{color:#090a08}
+
+/* Repository list follows the same full-width hover language */
+.github-section{padding:145px 56px 170px;background:var(--surface-2)}
+.github-head{display:grid;grid-template-columns:7fr 5fr;gap:40px;align-items:end;margin-bottom:80px}
+.github-head h2{margin:24px 0 0;font-size:clamp(48px,7vw,112px);line-height:.82;letter-spacing:-.07em}
+.github-head>p{max-width:550px;margin:0;color:var(--muted);font-size:clamp(18px,2vw,30px);line-height:1.2}
+.repo-row{transition:padding .4s cubic-bezier(.16,1,.3,1),background .25s,color .25s}
+.repo-row:hover{padding-inline:18px;background:var(--lime);color:#000}
+.repo-row:hover p{color:#303228}
+
+/* Recruiter conversion */
+.recruiter-cta{display:grid;grid-template-columns:9fr 3fr;gap:40px;align-items:end;padding:130px 56px 150px;border-block:1px solid var(--line);background:var(--bg)}
+.recruiter-cta small{font:8px var(--mono);color:var(--muted)}
+.recruiter-cta h2{margin:26px 0 28px;font-size:clamp(42px,6vw,96px);line-height:.84;letter-spacing:-.07em}
+.recruiter-cta p{max-width:720px;margin:0;color:var(--muted);font-size:16px;line-height:1.5}
+.recruiter-cta-actions{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.recruiter-cta-actions a{padding:10px 0;border-bottom:1px solid var(--line);font:8px var(--mono)}
+.recruiter-cta-actions a:hover{border-color:var(--lime)}
+.recruiter-cta-actions .primary{padding-inline:10px;background:var(--lime);color:#000}
+
+/* Crisp contact composition */
+.contact span{transform-origin:left bottom}
+.contact-mail{transition:background .3s,color .3s,padding .45s cubic-bezier(.16,1,.3,1)}
+.contact-mail:hover,.contact-mail:focus-visible{padding-inline:18px}
+
+/* Dialog and assistant surfaces remain solid, never blurred */
+.command-palette{background:var(--overlay)!important;backdrop-filter:none!important}
+.command-window,.assistant-panel,.case-study{box-shadow:none!important;backdrop-filter:none!important}
+.command-window nav a{transition:padding .35s cubic-bezier(.16,1,.3,1),background .2s,color .2s}
+.command-window nav a:hover{padding-inline:28px;background:var(--lime);color:#000}
+.assistant-launch{box-shadow:none!important}
+
+/* Responsive composition */
+@media(max-width:900px){
+ .frame nav{width:auto}
+ .project.hero{grid-column:3/-1}.project.wide{grid-column:1/span 8}.project.wide.right{grid-column:5/-1}.project.medium{grid-column:1/span 7}.project.small{grid-column:7/-1}.project.small.last{grid-column:1/span 5}
+ .github-section{padding:110px 24px 135px}.github-head{grid-template-columns:1fr;gap:30px}
+ .recruiter-cta{grid-template-columns:1fr;padding:100px 24px 120px}.recruiter-cta-actions{flex-direction:row;flex-wrap:wrap}
+}
+@media(max-width:640px){
+ .project-grid,.project-grid .project,.project-grid .project.hero,.project-grid .project.wide,.project-grid .project.medium,.project-grid .project.small{display:block;width:100%;max-width:100%;grid-column:auto!important;padding:0!important}
+ .project{margin-bottom:102px}
+ .project-grid .canvas,.project-grid .project.hero .canvas{aspect-ratio:4/3}
+ .project-title h2{font-size:clamp(34px,10vw,54px)}
+ .manifesto{position:relative;min-height:72svh;margin:20px 0}
+ .record:hover{padding-inline:10px}
+ .github-section{padding:90px 16px 110px}.github-head h2{font-size:14vw}
+ .repo-row{grid-template-columns:34px 1fr}.repo-row>b{display:none}.repo-row h3{font-size:11vw}
+ .recruiter-cta{padding:82px 16px 100px}.recruiter-cta h2{font-size:12vw}
+}
+@media(prefers-reduced-motion:reduce){
+ .canvas::before,.canvas::after,.window{animation:none!important}
+ .project-open:hover .window{transform:none!important}
+}

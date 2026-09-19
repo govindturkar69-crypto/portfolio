@@ -465,8 +465,8 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
 .recruiter-cta small{font:8px var(--mono);color:var(--muted)}
 .recruiter-cta h2{margin:26px 0 28px;font-size:clamp(42px,6vw,96px);line-height:.84;letter-spacing:-.07em}
 .recruiter-cta p{max-width:720px;margin:0;color:var(--muted);font-size:16px;line-height:1.5}
-.recruiter-cta-actions{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
-.recruiter-cta-actions a{padding:10px 0;border-bottom:1px solid var(--line);font:8px var(--mono)}
+.recruiter-cta-actions{display:flex;flex-direction:column;align-items:stretch;gap:10px}
+.recruiter-cta-actions a{display:flex;align-items:center;justify-content:space-between;width:100%;box-sizing:border-box;padding:10px 0;border-bottom:1px solid var(--line);font:8px var(--mono)}
 .recruiter-cta-actions a:hover{border-color:var(--lime)}
 .recruiter-cta-actions .primary{padding-inline:10px;background:var(--lime);color:#000}
 
@@ -485,7 +485,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
  .frame nav{width:auto}
  .project.hero{grid-column:3/-1}.project.wide{grid-column:1/span 8}.project.wide.right{grid-column:5/-1}.project.medium{grid-column:1/span 7}.project.small{grid-column:7/-1}.project.small.last{grid-column:1/span 5}
  .github-section{padding:110px 24px 135px}.github-head{grid-template-columns:1fr;gap:30px}
- .recruiter-cta{grid-template-columns:1fr;padding:100px 24px 120px}.recruiter-cta-actions{flex-direction:row;flex-wrap:wrap}
+ .recruiter-cta{grid-template-columns:1fr;padding:100px 24px 120px}.recruiter-cta-actions{flex-direction:row}.recruiter-cta-actions a{flex:1 1 0}
 }
 @media(max-width:640px){
  .project-grid,.project-grid .project,.project-grid .project.hero,.project-grid .project.wide,.project-grid .project.medium,.project-grid .project.small{display:block;width:100%;max-width:100%;grid-column:auto!important;padding:0!important}
@@ -495,7 +495,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
  .manifesto{position:relative;min-height:72svh;margin:20px 0}
  .github-section{padding:90px 16px 110px}.github-head h2{font-size:14vw}
  .repo-row{grid-template-columns:34px 1fr}.repo-row>b{display:none}.repo-row h3{font-size:11vw}
- .recruiter-cta{padding:82px 16px 100px}.recruiter-cta h2{font-size:12vw}
+ .recruiter-cta{padding:82px 16px 100px}.recruiter-cta h2{font-size:12vw}.recruiter-cta-actions{flex-direction:column}.recruiter-cta-actions a{flex:none}
 }
 @media(prefers-reduced-motion:reduce){
  .canvas::before,.canvas::after,.window{animation:none!important}

@@ -225,10 +225,6 @@ section.hero#home > :is(.philosophy, .bio) {
   animation-fill-mode: backwards !important;
 }
 
-.loader:not(.loaded) ~ main section.hero#home [data-motion-stagger-item] {
-  animation-play-state: paused !important;
-}
-
 section.hero#home .hero-actions a[data-motion-hover] {
   position: relative;
   cursor: pointer !important;
@@ -651,8 +647,8 @@ section.hero#home .hero-actions a[data-motion-hover]:active {
 }
 
 .capability-grid article[data-capability-card]:focus-visible {
-  color: var(--ink);
-  border-color: color-mix(in srgb, var(--ink) 32%, transparent);
+  color: var(--on-accent);
+  border-color: color-mix(in srgb, var(--on-accent) 32%, transparent);
   box-shadow: 0 18px 38px -26px color-mix(in srgb, var(--fg) 42%, transparent);
   transform: translate3d(0, -5px, 0);
 }
@@ -662,7 +658,7 @@ section.hero#home .hero-actions a[data-motion-hover]:active {
 }
 
 .capability-grid article[data-capability-card]:focus-visible > small {
-  color: color-mix(in srgb, var(--ink) 82%, transparent);
+  color: color-mix(in srgb, var(--on-accent) 82%, transparent);
   transform: translate3d(5px, -3px, 0);
 }
 
@@ -671,18 +667,18 @@ section.hero#home .hero-actions a[data-motion-hover]:active {
 }
 
 .capability-grid article[data-capability-card]:focus-visible p {
-  color: color-mix(in srgb, var(--ink) 82%, transparent);
+  color: color-mix(in srgb, var(--on-accent) 82%, transparent);
 }
 
 .capability-grid article[data-capability-card]:focus-visible > span {
-  border-color: color-mix(in srgb, var(--ink) 32%, transparent);
+  border-color: color-mix(in srgb, var(--on-accent) 32%, transparent);
   transform: translate3d(0, -2px, 0);
 }
 
 @media (hover: hover) and (pointer: fine) {
   .capability-grid article[data-capability-card]:hover {
-    color: var(--ink);
-    border-color: color-mix(in srgb, var(--ink) 32%, transparent);
+    color: var(--on-accent);
+    border-color: color-mix(in srgb, var(--on-accent) 32%, transparent);
     box-shadow: 0 18px 38px -26px color-mix(in srgb, var(--fg) 42%, transparent);
     transform: translate3d(0, -5px, 0);
   }
@@ -692,7 +688,7 @@ section.hero#home .hero-actions a[data-motion-hover]:active {
   }
 
   .capability-grid article[data-capability-card]:hover > small {
-    color: color-mix(in srgb, var(--ink) 82%, transparent);
+    color: color-mix(in srgb, var(--on-accent) 82%, transparent);
     transform: translate3d(5px, -3px, 0);
   }
 
@@ -701,11 +697,11 @@ section.hero#home .hero-actions a[data-motion-hover]:active {
   }
 
   .capability-grid article[data-capability-card]:hover p {
-    color: color-mix(in srgb, var(--ink) 82%, transparent);
+    color: color-mix(in srgb, var(--on-accent) 82%, transparent);
   }
 
   .capability-grid article[data-capability-card]:hover > span {
-    border-color: color-mix(in srgb, var(--ink) 32%, transparent);
+    border-color: color-mix(in srgb, var(--on-accent) 32%, transparent);
     transform: translate3d(0, -2px, 0);
   }
 }
@@ -814,7 +810,7 @@ section.hero#home .hero-actions a[data-motion-hover]:active {
 
 .github-section .repo-row[data-github-row]:focus-visible {
   background: var(--lime);
-  color: var(--ink);
+  color: var(--on-accent);
   box-shadow: 0 20px 44px -32px color-mix(in srgb, var(--fg) 46%, transparent);
   transform: translate3d(7px, -3px, 0);
 }
@@ -826,7 +822,7 @@ section.hero#home .hero-actions a[data-motion-hover]:active {
 }
 
 .github-section .repo-row[data-github-row]:focus-visible > [data-github-meta] p {
-  color: color-mix(in srgb, var(--ink) 82%, transparent);
+  color: color-mix(in srgb, var(--on-accent) 82%, transparent);
 }
 
 .github-section .repo-row[data-github-row]:focus-visible > b {
@@ -844,7 +840,7 @@ section.hero#home .hero-actions a[data-motion-hover]:active {
 
   .github-section .repo-row[data-github-row]:hover {
     background: var(--lime);
-    color: var(--ink);
+    color: var(--on-accent);
     box-shadow: 0 20px 44px -32px color-mix(in srgb, var(--fg) 46%, transparent);
     transform: translate3d(7px, -3px, 0);
   }
@@ -856,7 +852,7 @@ section.hero#home .hero-actions a[data-motion-hover]:active {
   }
 
   .github-section .repo-row[data-github-row]:hover > [data-github-meta] p {
-    color: color-mix(in srgb, var(--ink) 82%, transparent);
+    color: color-mix(in srgb, var(--on-accent) 82%, transparent);
   }
 
   .github-section .repo-row[data-github-row]:hover > b {
@@ -1108,7 +1104,7 @@ section.hero#home .hero-actions a[data-motion-hover]:active {
 
   .assistant .assistant-links a:hover {
     background: var(--lime);
-    color: var(--ink);
+    color: var(--on-accent);
   }
 }
 

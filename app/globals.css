@@ -535,6 +535,7 @@ html::-webkit-scrollbar,body::-webkit-scrollbar{display:none}
 :root,[data-theme="light"]{--lime:#6d4fd6;--on-accent:#fff}
 html.dark,html[data-theme="dark"],[data-theme="dark"]{--lime:#b9a3ff;--on-accent:#141018}
 ::selection{background:var(--lime);color:var(--on-accent)}
+.site:not(.dark) section.hero .availability{padding:8px 10px;background:rgba(17,18,15,.92);color:#f5f5ef!important}
 .skip,.hero-index span:first-child,.hero-actions .primary,.brief-actions .primary-contact,.system-flow>div:hover,.record:hover,.school-card-head strong,.recruiter-cta-actions .primary,.assistant-launch i,.assistant-message.user p,.assistant-suggestions button:hover,.assistant-panel form button,.command-window nav a:hover,.command-window nav a:focus-visible,.contact-mail:hover,.contact-mail:focus-visible,.project .proof>span{color:var(--on-accent)!important}
 .system-flow>div:hover span,.system-flow>div:hover small,.record:hover p,.record:hover .company-link>span{color:var(--on-accent)!important}
 .stack-map article{color:var(--on-accent)}

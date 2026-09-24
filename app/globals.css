@@ -540,3 +540,38 @@ html.dark,html[data-theme="dark"],[data-theme="dark"]{--lime:#b9a3ff;--on-accent
 .system-flow>div:hover span,.system-flow>div:hover small,.record:hover p,.record:hover .company-link>span{color:var(--on-accent)!important}
 .stack-map article{color:var(--on-accent)}
 .stack-map article:hover{color:#f5f5ef!important}
+
+
+/* Premium finishing pass: sharper hierarchy, cleaner surfaces, larger controls. */
+.site{--premium-line:color-mix(in srgb,var(--fg) 15%,transparent);--premium-panel:color-mix(in srgb,var(--bg) 95%,var(--fg) 5%)}
+.frame nav>*{display:inline-flex;min-height:36px;align-items:center}
+section.hero .discipline{letter-spacing:-.035em;text-wrap:balance}
+section.hero .bio{max-width:58ch!important}
+.portrait-card{right:7%;width:clamp(250px,27vw,500px);border-color:#b9a3ff66;background:#0c0b10;box-shadow:none}
+.portrait-card:before{content:"";position:absolute;inset:8px;z-index:4;border:1px solid #ffffff24;pointer-events:none}
+.portrait-hud{bottom:14px;padding-top:9px;border-top:1px solid #ffffff29;font-size:9px}
+.hero-actions a,.brief-actions a,.project .links>*,.github-all,.recruiter-cta-actions a,.foot a{min-height:40px;font-size:9px;letter-spacing:.045em}
+.hero-actions a{padding:11px 0!important}
+.section-label,.github-head small,.recruiter-cta small,.stack>div:first-child h2{font-size:10px;letter-spacing:.055em}
+.canvas{border-color:var(--premium-line);outline-offset:6px}
+.project-title{padding-top:18px;border-color:var(--premium-line)}
+.project-title span{font-size:9px;letter-spacing:.04em;color:var(--muted)}
+.project .links>*{display:inline-flex;align-items:center;padding:10px 8px}
+.capability-grid article,.repo-row,.record,.recruiter-cta,.contact-mail{border-color:var(--premium-line)}
+.capability-grid article{background:var(--premium-panel)}
+.recruiter-cta-actions a{padding:12px 0}
+.recruiter-cta-actions .primary{padding-inline:12px}
+.github-all{display:inline-flex;align-items:center}
+.foot a{display:inline-flex;align-items:center}
+@media(max-width:900px){.portrait-card{right:4%;width:36vw}}
+@media(max-width:640px){
+ .frame nav>*{min-height:34px}
+ .portrait-card{right:16px;width:min(52vw,250px);height:40vh}
+ section.hero .bio{width:min(78%,280px);max-width:280px!important;overflow-wrap:anywhere}
+ section.hero .kinetic{font-size:9.4vw!important}
+ .hero-actions{gap:8px}
+ .hero-actions a{min-height:38px;font-size:8px!important}
+ .brief-actions a,.project .links>*,.recruiter-cta-actions a,.github-all{font-size:9px}
+ .project-title span{font-size:8px}
+ .foot a{min-height:34px;font-size:8px}
+}

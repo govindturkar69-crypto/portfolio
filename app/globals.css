@@ -575,3 +575,17 @@ section.hero .bio{max-width:58ch!important}
  .project-title span{font-size:8px}
  .foot a{min-height:34px;font-size:8px}
 }
+
+
+/* Mobile hero containment: keep copy, status, portrait, title and actions distinct. */
+@media(max-width:640px){
+ section.hero#home{min-height:auto;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto auto auto auto;gap:18px;padding:82px 16px 30px!important}
+ section.hero#home .discipline{grid-row:1}
+ section.hero#home .bio{grid-row:2;justify-self:start;width:100%;max-width:36ch!important;margin-bottom:0!important;font-size:11px;line-height:1.55}
+ section.hero#home .availability{position:static;grid-column:1;grid-row:3;justify-self:start;max-width:100%;padding:9px 11px;border:1px solid var(--premium-line);background:var(--premium-panel);font-size:9px;line-height:1.35}
+ section.hero#home .portrait-card{position:relative;grid-column:1;grid-row:4;top:auto;right:auto;width:100%;height:auto;aspect-ratio:16/11;justify-self:stretch}
+ section.hero#home .portrait-card img{object-position:center 18%}
+ section.hero#home .kinetic{grid-row:5;align-self:auto;margin-top:4px!important;font-size:7.5vw!important}
+ section.hero#home .hero-actions{grid-row:6}
+ section.hero#home .scroll{display:none!important}
+}

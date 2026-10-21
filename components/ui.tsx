@@ -1,0 +1,46 @@
+import type { AnchorHTMLAttributes, ReactNode } from 'react';
+
+const buttonBase =
+  'inline-flex items-center justify-center gap-2 rounded-full text-sm font-medium transition duration-200 ease-out ' +
+  'focus-visible:outline-offset-2 active:scale-[0.98] disabled:pointer-events-none';
+
+export const buttonStyles = {
+  primary: `${buttonBase} h-11 px-5 bg-fg text-bg hover:bg-white hover:shadow-[0_0_0_4px_rgb(255_255_255/0.08)]`,
+  secondary: `${buttonBase} h-11 px-5 border border-line-strong bg-white/[0.03] text-fg hover:border-white/30 hover:bg-white/[0.07]`,
+  ghost: `${buttonBase} h-9 px-3 text-muted hover:text-fg hover:bg-white/[0.06]`,
+  icon: `${buttonBase} size-11 border border-line-strong bg-white/[0.03] text-muted hover:text-fg hover:border-white/30 hover:bg-white/[0.07]`,
+};
+
+type ExternalLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & { href: string; children: ReactNode };
+
+/** Opens in a new tab and tells screen-reader users so. */
+export function ExternalLink({ children, ...props }: ExternalLinkProps) {
+  return (
+    <a target="_blank" rel="noopener noreferrer" {...props}>
+      {children}
+      <span className="sr-only"> (opens in a new tab)</span>
+    </a>
+  );
+}
+
+export function SectionHeading({
+  id,
+  eyebrow,
+  title,
+  description,
+}: {
+  id: string;
+  eyebrow: string;
+  title: string;
+  description?: string;
+}) {
+  return (
+    <div className="reveal mb-10 max-w-2xl md:mb-14">
+      <p className="eyebrow mb-3">{eyebrow}</p>
+      <h2 id={id} className="text-3xl font-semibold tracking-[-0.03em] text-balance md:text-4xl">
+        {title}
+      </h2>
+      {description ? <p className="mt-4 text-base leading-relaxed text-pretty text-muted">{description}</p> : null}
+    </div>
+  );
+}

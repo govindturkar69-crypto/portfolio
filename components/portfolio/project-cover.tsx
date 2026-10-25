@@ -10,9 +10,9 @@ import type { Project } from '@/data/projects';
  * against the card tilt (--mx/--my, set by WorkGrid) for a parallax feel.
  */
 
-export type CoverTheme = { bg: string; ink: string; accent: string };
+type CoverTheme = { bg: string; ink: string; accent: string };
 
-export const coverThemes: Record<string, CoverTheme> = {
+const coverThemes: Record<string, CoverTheme> = {
   scratchdb: { bg: '#101a3a', ink: '#e9edff', accent: '#ff8a3d' },
   veridoc: { bg: '#f1e6d2', ink: '#2a2118', accent: '#e2b93b' },
   nexuscode: { bg: '#0f1419', ink: '#d7dde6', accent: '#7ee0b5' },

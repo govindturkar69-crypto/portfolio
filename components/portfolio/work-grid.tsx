@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState, type CSSProperties, type MouseEvent, type PointerEvent } from 'react';
-import type { Project } from '@/data/projects';
+import { soloProjects, type Project } from '@/data/projects';
 import { sound } from '@/lib/sound';
 import { ArrowLeft, ArrowRight, ArrowUpRight, GitHub } from '../icons';
 import { buttonStyles, ExternalLink } from '../ui';
@@ -88,12 +88,32 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
   return (
     <>
       <ul className="grid gap-x-5 gap-y-14 md:grid-cols-2 md:gap-y-20 lg:gap-x-8">
-        {projects.map((entry, index) => (
-          <li key={entry.slug} data-reveal style={{ '--d': `${(index % 2) * 110}ms` } as CSSProperties}>
-            <WorkCard project={entry} index={index} onOpen={open} />
-          </li>
-        ))}
+        {projects
+          .filter((entry) => entry.featured)
+          .map((entry, index) => (
+            <li key={entry.slug} data-reveal style={{ '--d': `${(index % 2) * 110}ms` } as CSSProperties}>
+              <WorkCard project={entry} index={projects.indexOf(entry)} onOpen={open} />
+            </li>
+          ))}
       </ul>
+
+      {projects.some((entry) => !entry.featured) ? (
+        <div className="mt-24 md:mt-32">
+          <div className="flex items-center gap-4" data-reveal>
+            <h3 className="about-label">More projects</h3>
+            <span aria-hidden="true" className="about-rule" data-reveal="line" />
+          </div>
+          <ul className="mt-2">
+            {projects
+              .filter((entry) => !entry.featured)
+              .map((entry, i) => (
+                <li key={entry.slug} data-reveal style={{ '--d': `${i * 90}ms` } as CSSProperties}>
+                  <WorkRow project={entry} index={projects.indexOf(entry)} onOpen={open} />
+                </li>
+              ))}
+          </ul>
+        </div>
+      ) : null}
 
       <dialog
         ref={dialogRef}
@@ -180,6 +200,11 @@ function WorkCard({
         <span className="sr-only">Stack: </span>
         {project.stack.slice(0, 5).join(' · ')}
       </p>
+      {soloProjects.has(project.slug) ? (
+        <p className="mt-1.5 font-mono text-xs text-subtle">
+          <span className="text-fg/80">Solo project</span> · designed and built end to end
+        </p>
+      ) : null}
 
       <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-4 text-sm">
         <Link href={`/work/${project.slug}`} className="work-action">
@@ -197,6 +222,58 @@ function WorkCard({
           </ExternalLink>
         ) : null}
         {project.links.live && project.liveNote ? <span className="font-mono text-xs text-subtle">{project.liveNote}</span> : null}
+      </div>
+    </article>
+  );
+}
+
+/** Compact row for secondary projects: small cover, name, purpose, stack and links. */
+function WorkRow({
+  project,
+  index,
+  onOpen,
+}: {
+  project: Project;
+  index: number;
+  onOpen: (event: MouseEvent<HTMLAnchorElement>, slug: string) => void;
+}) {
+  return (
+    <article className="work-row group">
+      <Link href={`/work/${project.slug}`} onClick={(event) => onOpen(event, project.slug)} tabIndex={-1} aria-hidden="true" className="work-row-thumb">
+        <ProjectCover project={project} />
+      </Link>
+      <div className="min-w-0">
+        <div className="flex items-baseline justify-between gap-4 font-mono text-xs tracking-[0.06em] text-subtle uppercase">
+          <span className="truncate">{project.category}</span>
+          <span className="shrink-0 tabular-nums">{project.year ?? String(index + 1).padStart(2, '0')}</span>
+        </div>
+        <h4 className="mt-1.5 text-2xl leading-tight font-semibold tracking-[-0.03em]">
+          <Link href={`/work/${project.slug}`} onClick={(event) => onOpen(event, project.slug)} className="work-title-link">
+            <span className="work-title">{project.name}</span>
+          </Link>
+        </h4>
+        <p className="mt-2 max-w-[60ch] text-[15px] leading-relaxed text-pretty text-muted">{project.tagline}</p>
+        <p className="mt-2 font-mono text-xs text-subtle">
+          <span className="sr-only">Stack: </span>
+          {project.stack.slice(0, 5).join(' · ')}
+          {soloProjects.has(project.slug) ? ' · Solo project' : ''}
+        </p>
+        <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-sm">
+          <Link href={`/work/${project.slug}`} className="work-action">
+            Case study
+            <ArrowRight size={14} className="work-action-arrow" />
+          </Link>
+          <ExternalLink href={project.links.github} className="work-action">
+            Source
+            <ArrowUpRight size={14} className="work-action-arrow" />
+          </ExternalLink>
+          {project.links.live ? (
+            <ExternalLink href={project.links.live} className="work-action">
+              Live demo
+              <ArrowUpRight size={14} className="work-action-arrow" />
+            </ExternalLink>
+          ) : null}
+        </div>
       </div>
     </article>
   );

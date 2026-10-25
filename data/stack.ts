@@ -1,4 +1,4 @@
-export type StackGroup = {
+type StackGroup = {
   id: string;
   title: string;
   summary: string;

@@ -21,7 +21,22 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     title: `${project.name} case study`,
     description: project.tagline,
     alternates: { canonical: `/work/${project.slug}` },
-    openGraph: { title: `${project.name} — case study`, description: project.tagline, url: `/work/${project.slug}` },
+    openGraph: {
+      title: `${project.name} — case study`,
+      description: project.tagline,
+      url: `/work/${project.slug}`,
+      type: 'article',
+      // Page-level openGraph replaces the layout's, so always set an image: the real screenshot, else the site card.
+      images: project.image
+        ? [{ url: project.image.src, width: project.image.width, height: project.image.height, alt: project.image.alt }]
+        : [{ url: '/og.png', width: 1200, height: 630, alt: `${project.name} — case study` }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${project.name} — case study`,
+      description: project.tagline,
+      images: [project.image ? project.image.src : '/og.png'],
+    },
   };
 }
 

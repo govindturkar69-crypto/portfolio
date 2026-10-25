@@ -292,9 +292,17 @@ export function InflatedWord({ word, roughness = 0.25, className = '' }: Props) 
       resize();
       host.dataset.ready = 'true'; // CSS crossfades from the fallback to the canvas
     };
+    // The texture build (a distance transform over the whole word) is a long CPU task, so it
+    // waits until the page has loaded and the main thread is idle; the CSS lettering shows
+    // until then, exactly as it does without WebGL.
     const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
-    if (idle) idle(() => void build(), { timeout: 800 });
-    else window.setTimeout(() => void build(), 120);
+    const schedule = () => {
+      if (disposed) return;
+      if (idle) idle(() => void build(), { timeout: 2000 });
+      else window.setTimeout(() => void build(), 200);
+    };
+    if (document.readyState === 'complete') schedule();
+    else window.addEventListener('load', schedule, { once: true });
 
     // Pointer tilt: lerp toward the target, render only while it is still moving.
     const tick = () => {
@@ -337,6 +345,7 @@ export function InflatedWord({ word, roughness = 0.25, className = '' }: Props) 
 
     return () => {
       disposed = true;
+      window.removeEventListener('load', schedule);
       cancelAnimationFrame(frame);
       window.removeEventListener('pointermove', onMove);
       canvas.removeEventListener('webglcontextlost', onLost);

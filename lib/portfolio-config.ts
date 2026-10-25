@@ -10,9 +10,6 @@ export const portfolioConfig = {
     timeZone: 'Asia/Kolkata',
     timeZoneLabel: 'IST',
     city: 'Nagpur',
-    role: 'Full-stack & Systems Engineering',
-    /** Shown only because it is true of my profile; set to null to hide. */
-    status: site.availability.startsWith('Open') ? 'Open to work' : null,
   },
   weather: {
     /** Open-Meteo needs no API key. Only my city is queried; visitors' locations are never requested. */
@@ -56,5 +53,3 @@ export const portfolioConfig = {
     { id: 'contact', label: 'Contact', href: '/#contact' },
   ],
 } as const;
-
-export type DockItem = (typeof portfolioConfig.dock)[number];

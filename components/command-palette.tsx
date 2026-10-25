@@ -5,9 +5,10 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { projects } from '@/data/projects';
 import { navigation, site } from '@/data/site';
 import { writeClipboard } from '@/lib/clipboard';
+import { theme } from '@/lib/theme';
 import { Copy, Download, GitHub, Hash, Layers, LinkedIn, Mail, Search } from './icons';
 
-export const OPEN_PALETTE_EVENT = 'command-palette:open';
+const OPEN_PALETTE_EVENT = 'command-palette:open';
 
 /** Lets any button open the palette without sharing React state. */
 export function openCommandPalette() {
@@ -21,7 +22,8 @@ type Action =
   | { type: 'external'; href: string }
   | { type: 'copy-email' }
   | { type: 'mailto' }
-  | { type: 'download'; href: string };
+  | { type: 'download'; href: string }
+  | { type: 'theme' };
 
 type Command = {
   id: string;
@@ -110,6 +112,15 @@ export function CommandPalette() {
 
   const commands = useMemo<Command[]>(
     () => [
+      {
+        id: 'nav-home',
+        label: 'Home',
+        group: 'Navigate' as const,
+        icon: <Hash />,
+        hint: 'Top of page',
+        keywords: 'start hero top',
+        action: { type: 'route' as const, href: '/#top' },
+      },
       ...navigation.map((item) => ({
         id: `nav-${item.label}`,
         label: item.label,
@@ -143,6 +154,15 @@ export function CommandPalette() {
         icon: <Mail />,
         keywords: 'contact mailto hire',
         action: { type: 'mailto' },
+      },
+      {
+        id: 'theme',
+        label: 'Switch theme (Paper / Ink)',
+        group: 'Actions',
+        icon: <Layers />,
+        hint: 'Light / dark',
+        keywords: 'dark light mode appearance paper ink colour color',
+        action: { type: 'theme' },
       },
       {
         id: 'resume',
@@ -225,6 +245,9 @@ export function CommandPalette() {
       }
       hide();
       switch (action.type) {
+        case 'theme':
+          theme.set(theme.get() === 'dark' ? 'light' : 'dark');
+          break;
         case 'route':
           navigate(action.href);
           break;
@@ -411,13 +434,5 @@ export function CommandPalette() {
         </span>
       </div>
     </dialog>
-  );
-}
-
-export function CommandTrigger({ className = '', children }: { className?: string; children: ReactNode }) {
-  return (
-    <button type="button" onClick={openCommandPalette} aria-haspopup="dialog" className={className}>
-      {children}
-    </button>
   );
 }

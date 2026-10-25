@@ -7,3 +7,4 @@ dist/
 *.tar.gz
 .env*
 !.env.example
+*.tsbuildinfo

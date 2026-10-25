@@ -10,7 +10,6 @@ export const buttonStyles = {
   ghost: `${buttonBase} h-9 px-3 text-muted hover:text-fg hover:bg-fg/[0.06]`,
   /** Third level: same height as primary/secondary, no fill, arrow nudges on hover. */
   tertiary: `${buttonBase} group h-11 px-3 text-fg hover:text-accent`,
-  icon: `${buttonBase} size-11 border border-line-strong bg-fg/[0.03] text-muted hover:text-fg hover:border-fg/30 hover:bg-fg/[0.07]`,
 };
 
 type ExternalLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & { href: string; children: ReactNode };
@@ -22,27 +21,5 @@ export function ExternalLink({ children, ...props }: ExternalLinkProps) {
       {children}
       <span className="sr-only"> (opens in a new tab)</span>
     </a>
-  );
-}
-
-export function SectionHeading({
-  id,
-  eyebrow,
-  title,
-  description,
-}: {
-  id: string;
-  eyebrow: string;
-  title: string;
-  description?: string;
-}) {
-  return (
-    <div className="reveal mb-10 max-w-2xl md:mb-14">
-      <p className="eyebrow mb-3">{eyebrow}</p>
-      <h2 id={id} className="text-3xl font-semibold tracking-[-0.03em] text-balance md:text-4xl">
-        {title}
-      </h2>
-      {description ? <p className="mt-4 text-base leading-relaxed text-pretty text-muted">{description}</p> : null}
-    </div>
   );
 }

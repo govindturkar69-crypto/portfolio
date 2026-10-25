@@ -3,16 +3,13 @@
  * Always starts muted and is never persisted as "on": each visit begins silent, and the
  * AudioContext is only created inside the click that enables sound (browser autoplay rules).
  */
-type Cue = 'click' | 'whoosh' | 'tick';
+type Cue = 'click' | 'tick';
 type Listener = (enabled: boolean) => void;
 
 let context: AudioContext | null = null;
 let master: GainNode | null = null;
 let enabled = false;
 const listeners = new Set<Listener>();
-
-const reducedMotion = () =>
-  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 function ensureContext() {
   if (context) return context;
@@ -67,31 +64,7 @@ export const sound = {
 
   play(cue: Cue) {
     if (!enabled || !context || !master || context.state !== 'running') return;
-    // Whooshes are motion-flavoured; skip them for visitors who asked for less motion.
-    if (cue === 'whoosh' && reducedMotion()) return;
     const now = context.currentTime;
-
-    if (cue === 'whoosh') {
-      const length = Math.floor(context.sampleRate * 0.45);
-      const buffer = context.createBuffer(1, length, context.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / length);
-      const noise = context.createBufferSource();
-      noise.buffer = buffer;
-      const filter = context.createBiquadFilter();
-      filter.type = 'bandpass';
-      filter.Q.value = 0.9;
-      filter.frequency.setValueAtTime(380, now);
-      filter.frequency.exponentialRampToValueAtTime(2600, now + 0.4);
-      const gain = context.createGain();
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.12, now + 0.08);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
-      noise.connect(filter).connect(gain).connect(master);
-      noise.start(now);
-      noise.stop(now + 0.46);
-      return;
-    }
 
     const osc = context.createOscillator();
     const gain = context.createGain();

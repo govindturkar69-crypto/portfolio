@@ -4,28 +4,34 @@ import Link from 'next/link';
 import { getProject, projects } from '@/data/projects';
 import { experience, site, type TimelineEntry } from '@/data/site';
 import { alsoUsed, stackGroups } from '@/data/stack';
-import { ArrowUpRight } from '../icons';
+import { ArrowUpRight, Download, GitHub, LinkedIn } from '../icons';
 import { ExternalLink } from '../ui';
+import { SectionSticker } from './hero-stickers';
+import type { StickerKind } from './sticker-art';
 import { WorkGrid } from './work-grid';
 
 export const container = 'mx-auto w-full max-w-[88rem] px-4 sm:px-6 lg:px-10';
 
 /** Shared section opener: numbered mono label, hairline, then a large heading. */
-export function SectionIntro({
+function SectionIntro({
   index,
   label,
   id,
   title,
   aside,
+  sticker,
 }: {
   index: string;
   label: string;
   id: string;
   title: React.ReactNode;
   aside?: React.ReactNode;
+  /** Optional decorative sticker in the open space to the right of the heading (wide screens). */
+  sticker?: { kind: StickerKind; seed: number };
 }) {
   return (
-    <header className="reveal mb-12 md:mb-20">
+    <header className="reveal relative mb-12 md:mb-20">
+      {sticker ? <SectionSticker kind={sticker.kind} seed={sticker.seed} className="top-16 right-[3%]" /> : null}
       <div className="flex items-center justify-between gap-4 border-b border-line pb-4 font-mono text-xs tracking-[0.08em] text-subtle uppercase">
         <span>
           ({index}) — {label}
@@ -71,6 +77,7 @@ export function WorkSection() {
         index="01"
         label="Selected work"
         id="work-title"
+        sticker={{ kind: 'braces', seed: 6 }}
         aside={`${String(projects.length).padStart(2, '0')} projects`}
         title={
           <>
@@ -91,6 +98,7 @@ export function CapabilitiesSection() {
           index="02"
           label="Capabilities"
           id="capabilities-title"
+          sticker={{ kind: 'flame', seed: 7 }}
           title={
             <>
               Every tool listed here <span className="text-muted">ships in a project you can open.</span>
@@ -173,6 +181,33 @@ function TimelineGroup({ label, entries, delay = 0 }: { label: string; entries: 
   );
 }
 
+/** How I work: each principle points at the project that demonstrates it. */
+const principles: { title: string; body: string; proof: { label: string; href: string } }[] = [
+  {
+    title: 'Build the layer underneath',
+    body: 'When I want to understand a system properly, I implement it — storage engines, wire protocols, crawlers.',
+    proof: { label: 'ScratchDB', href: '/work/scratchdb' },
+  },
+  {
+    title: 'Prove it with tests',
+    body: 'Correctness claims come with automated tests, fuzzing and failure cases, not just a working demo.',
+    proof: { label: 'Redis in Java', href: '/work/java-redis' },
+  },
+  {
+    title: 'Ship it end to end',
+    body: 'Interfaces, typed APIs, data models and deployment — finished products people can open and use.',
+    proof: { label: 'RealtyIQ', href: '/work/realtyiq' },
+  },
+];
+
+/** Milestones taken from verified project data (test counts were counted in the repositories). */
+const milestones: { value: string; label: string; href: string }[] = [
+  { value: '58/58', label: 'release-mode tests in ScratchDB, plus 500K-transaction endurance runs', href: '/work/scratchdb' },
+  { value: '71', label: 'automated tests in a Redis-compatible server written in plain Java', href: '/work/java-redis' },
+  { value: '391', label: 'test cases across the Private Search Engine backend and frontend', href: '/work/private-search' },
+  { value: '3', label: 'live deployments: NexusCode, RealtyIQ and Aurora Weather', href: '/#work' },
+];
+
 export function AboutSection() {
   const current = experience.find((entry) => entry.kind === 'work');
   const facts: [string, string][] = [
@@ -192,6 +227,7 @@ export function AboutSection() {
         index="03"
         label="About"
         id="about-title"
+        sticker={{ kind: 'star', seed: 8 }}
         title={
           <>
             I like knowing how the whole thing works — <span className="text-muted">from the button to the bytes on disk.</span>
@@ -227,6 +263,21 @@ export function AboutSection() {
               </div>
             ))}
           </dl>
+
+          <div className="mt-6 flex flex-wrap gap-2" data-reveal style={{ '--d': '420ms' } as React.CSSProperties}>
+            <ExternalLink href={site.github} className="about-chip">
+              <GitHub size={14} />
+              GitHub
+            </ExternalLink>
+            <ExternalLink href={site.linkedin} className="about-chip">
+              <LinkedIn size={14} />
+              LinkedIn
+            </ExternalLink>
+            <a href={site.resume} download className="about-chip">
+              <Download size={14} />
+              Résumé
+            </a>
+          </div>
         </aside>
 
         {/* Right: introduction, then experience and education. */}
@@ -244,10 +295,44 @@ export function AboutSection() {
             </p>
           </div>
 
+          <div className="mt-16 flex items-center gap-4" data-reveal>
+            <h3 className="about-label">How I work</h3>
+            <span aria-hidden="true" className="about-rule" data-reveal="line" />
+          </div>
+          <ol className="mt-6 grid gap-6 md:grid-cols-3">
+            {principles.map((item, i) => (
+              <li key={item.title} className="about-principle" data-reveal style={{ '--d': `${i * 90}ms` } as React.CSSProperties}>
+                <p className="font-mono text-xs text-accent tabular-nums">{String(i + 1).padStart(2, '0')}</p>
+                <h4 className="mt-2 text-lg leading-snug font-semibold tracking-[-0.02em]">{item.title}</h4>
+                <p className="mt-2 text-[15px] leading-relaxed text-pretty text-muted">{item.body}</p>
+                <Link href={item.proof.href} className="work-action mt-3 text-sm">
+                  See {item.proof.label}
+                  <ArrowUpRight size={14} className="work-action-arrow" />
+                </Link>
+              </li>
+            ))}
+          </ol>
+
           <div className="mt-16">
             <TimelineGroup label="Experience" entries={experience.filter((entry) => entry.kind === 'work')} />
             <TimelineGroup label="Education" entries={experience.filter((entry) => entry.kind === 'education')} delay={80} />
           </div>
+
+          <div className="mt-16 flex items-center gap-4" data-reveal>
+            <h3 className="about-label">Selected milestones</h3>
+            <span aria-hidden="true" className="about-rule" data-reveal="line" />
+          </div>
+          <ul className="mt-2 grid sm:grid-cols-2">
+            {milestones.map((item, i) => (
+              <li key={item.label} data-reveal style={{ '--d': `${i * 80}ms` } as React.CSSProperties}>
+                <Link href={item.href} className="about-milestone group">
+                  <span className="text-3xl font-semibold tracking-[-0.03em] tabular-nums">{item.value}</span>
+                  <span className="text-sm leading-snug text-muted">{item.label}</span>
+                  <ArrowUpRight size={14} className="about-entry-arrow mt-1 shrink-0" />
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>

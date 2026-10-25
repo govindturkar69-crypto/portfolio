@@ -155,7 +155,7 @@
    * Per-element delay: --d (ms). Word stagger: --i.
    */
   /* Hidden states: applied instantly (no transition), so nothing visibly fades out first. */
-  html[data-reveal-ready] :is(.reveal, [data-reveal]):not([data-reveal='line'], [data-reveal='words'], [data-revealed]) {
+  html[data-reveal-ready] :is(.reveal, [data-reveal]):not([data-reveal='line'], [data-reveal='words'], [data-reveal='drop'], [data-revealed]) {
     opacity: 0;
     transform: translateY(16px);
   }
@@ -178,7 +178,7 @@
   }
 
   /* Revealed: the only state that transitions. */
-  html[data-reveal-ready] :is(.reveal, [data-reveal])[data-revealed]:not([data-reveal='line'], [data-reveal='words']) {
+  html[data-reveal-ready] :is(.reveal, [data-reveal])[data-revealed]:not([data-reveal='line'], [data-reveal='words'], [data-reveal='drop']) {
     transition:
       opacity 0.7s var(--ease-out-snappy) var(--d, 0ms),
       transform 0.8s var(--ease-out-snappy) var(--d, 0ms);
@@ -437,7 +437,7 @@
     --grain: 0.045;
     position: fixed;
     inset: 0;
-    z-index: 45; /* above header (40) and gauge (30), below the skip link (50) and <dialog> (top layer) */
+    z-index: 45; /* above the HUD (40), below the skip link (50) and <dialog> (top layer) */
     pointer-events: none;
     overflow: hidden;
     contain: strict;
@@ -478,32 +478,6 @@
   @media (forced-colors: active), (prefers-reduced-transparency: reduce), print {
     .film-grain {
       display: none;
-    }
-  }
-
-  /*
-   * First-visit loader. Hidden unless the inline head script set <html data-intro>.
-   * The panel starts visible from server HTML (counter at 000), so there is nothing to
-   * flash. If JS never takes over within 2.2s, the overlay fades itself out; JS cancels
-   * that animation when it starts, and declines to start at all if it arrives later.
-   * z-index 44: above the HUD (40), below the film grain (45) and skip link (50).
-   */
-  .page-loader {
-    display: none;
-  }
-
-  html[data-intro] .page-loader {
-    position: fixed;
-    inset: 0;
-    z-index: 44;
-    display: block;
-    animation: loader-failsafe 0.4s 2.2s ease-out forwards; /* delay mirrors FAILSAFE_MS in page-loader.tsx */
-  }
-
-  @keyframes loader-failsafe {
-    to {
-      opacity: 0;
-      visibility: hidden;
     }
   }
 
@@ -671,13 +645,30 @@
   }
 
   @media (hover: hover) {
+    .sticker:hover :is(.sticker-sway, .sticker-float) {
+      animation-play-state: paused;
+    }
+
     .sticker:hover .sticker-hover {
       transform: translateY(-6px) scale(1.08) rotate(var(--hover-tilt, 7deg));
     }
   }
 
-  /* While the first-visit loader covers the page, hold everything so the drop plays on reveal. */
-  html[data-intro] :is(.sticker-fall, .sticker-sway, .sticker-float) {
+  /*
+   * Section stickers (SectionSticker): the wrapper is placed in a section's open space;
+   * the sticker inside is in normal flow there. They fall from ~¾ of a screen above, and
+   * stay paused (out of view, above) until ScrollReveal marks their section as seen.
+   */
+  .section-sticker {
+    z-index: 4;
+    --fall-from: -75vh;
+  }
+
+  .section-sticker > .sticker {
+    position: relative;
+  }
+
+  html[data-reveal-ready] .section-sticker:not([data-revealed]) :is(.sticker-fall, .sticker-sway, .sticker-float) {
     animation-play-state: paused;
   }
 
@@ -688,7 +679,7 @@
    */
   @keyframes sticker-fall {
     0% {
-      transform: translateY(calc(-100svh - 120px)) rotate(var(--fall-spin, -8deg));
+      transform: translateY(var(--fall-from, calc(-100svh - 120px))) rotate(var(--fall-spin, -8deg));
       animation-timing-function: cubic-bezier(0.55, 0, 0.9, 0.45);
     }
     68% {
@@ -805,6 +796,9 @@
   }
 
   .hud-brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
     font-family: var(--font-heading);
     font-size: clamp(0.8rem, 2.4vw, 0.95rem);
     white-space: nowrap;
@@ -872,8 +866,12 @@
     color: var(--color-subtle);
   }
 
+  /* Tap targets: at least 24px tall everywhere, 32px on touch screens. */
   .hud-nav-link {
     position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
     padding: 0.1rem 0;
     text-transform: uppercase;
     transition: color 0.2s;
@@ -900,6 +898,13 @@
   .hud-nav-link[aria-current]::after {
     transform: scaleX(1);
     transform-origin: left;
+  }
+
+  @media (pointer: coarse) {
+    .hud-nav-link,
+    .hud-brand {
+      min-height: 2rem;
+    }
   }
 
   @media (max-width: 420px) {
@@ -1145,6 +1150,42 @@
     transform: none;
   }
 
+  /* Secondary projects: compact editorial rows with a small cover. */
+  .work-row {
+    position: relative;
+    display: grid;
+    gap: 1rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .work-row-thumb {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    border-radius: 10px;
+  }
+
+  .work-row-thumb > * {
+    transition: transform 0.7s var(--ease-out-snappy);
+  }
+
+  .work-row:hover .work-row-thumb > * {
+    transform: scale(1.04);
+  }
+
+  .work-row:hover .work-title {
+    background-size: 100% 1.5px;
+  }
+
+  @media (min-width: 768px) {
+    .work-row {
+      grid-template-columns: 15rem minmax(0, 1fr);
+      gap: 2rem;
+      align-items: center;
+    }
+  }
+
   /* Card actions: always visible (no hover needed); hover nudges the arrow. */
   .work-action {
     display: inline-flex;
@@ -1292,6 +1333,50 @@
     background: var(--color-line-strong);
   }
 
+  .about-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.25rem;
+    padding: 0 0.85rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    color: var(--color-fg);
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+
+  .about-chip:hover {
+    border-color: color-mix(in oklab, var(--color-fg) 35%, transparent);
+    background: color-mix(in oklab, var(--color-fg) 5%, transparent);
+  }
+
+  .about-principle {
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .about-milestone {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1.25rem 0.25rem 1.25rem 0;
+    border-bottom: 1px solid var(--color-line);
+    transition: color 0.2s;
+  }
+
+  .about-milestone:hover .about-entry-arrow {
+    color: var(--color-accent);
+    transform: translate(2px, -2px);
+  }
+
+  @media (min-width: 640px) {
+    .about-milestone {
+      padding-right: 1.5rem;
+    }
+  }
+
   .about-entry {
     position: relative;
     display: grid;
@@ -1356,7 +1441,7 @@
     display: flex;
     flex-direction: column;
     margin-top: 2.5rem;
-    font-size: clamp(3.25rem, 11.5vw, 12.5rem);
+    font-size: clamp(2.75rem, 11.5vw, 12.5rem);
     font-weight: 700;
     line-height: 0.86;
     letter-spacing: -0.06em;

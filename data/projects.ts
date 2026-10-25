@@ -1,4 +1,4 @@
-export type Metric = { value: string; label: string };
+type Metric = { value: string; label: string };
 
 export type ArchitectureLayer = { name: string; detail: string };
 
@@ -472,6 +472,12 @@ export const projects: Project[] = [
     },
   },
 ];
+
+/**
+ * Repositories where I am the only contributor, verified with GitHub's contributors API
+ * (2026-10-25). Cards show "Solo project" only for these.
+ */
+export const soloProjects = new Set(['scratchdb', 'java-redis', 'veridoc', 'private-search', 'nexuscode', 'realtyiq', 'aurora-weather', 'talentai']);
 
 export function getProject(slug: string) {
   return projects.find((project) => project.slug === slug);

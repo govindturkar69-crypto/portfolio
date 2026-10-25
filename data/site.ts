@@ -4,7 +4,6 @@ export const site = {
   url: 'https://govind-turkar-portfolio.turkargovind3.chatgpt.site',
   email: 'govindturkar69@gmail.com',
   location: 'Nagpur, India',
-  timezone: 'IST · UTC+5:30',
   resume: '/Govind_Turkar_Resume.pdf',
   github: 'https://github.com/govindturkar69-crypto',
   linkedin: 'https://www.linkedin.com/in/govind-turkar-1487a0430/',

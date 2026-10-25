@@ -87,7 +87,10 @@ export function WeatherReadout() {
 
   if (!enabled || state.status !== 'ready') return null;
   return (
-    <span className="tabular-nums" aria-label={`Weather: ${state.reading.temperature} degrees Celsius, ${state.reading.label}`}>
+    <span className="tabular-nums">
+      <span className="sr-only">
+        Weather: {state.reading.temperature} degrees Celsius, {state.reading.label}
+      </span>
       <span aria-hidden="true" className="mx-2 text-subtle">
         /
       </span>

@@ -214,7 +214,7 @@ export function WarpTunnel() {
       <div className="warp-stage">
         <canvas aria-hidden="true" className="warp-canvas" />
         <h2 id="warp-title" className="sr-only">
-          How I work
+          What I care about
         </h2>
         <ol className="warp-lines">
           {statements.map((statement) => (

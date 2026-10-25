@@ -70,14 +70,14 @@ export function HUDNav() {
             type="button"
             data-magnetic
             className="hud-nav-link"
-            aria-pressed={dark}
-            aria-label="Dark theme"
+            data-theme-toggle
             onClick={() => {
               sound.play('click');
               theme.set(dark ? 'light' : 'dark');
             }}
           >
-            <span aria-hidden="true">Theme:{dark ? 'Ink' : 'Paper'}</span>
+            Theme:{dark ? 'Ink' : 'Paper'}
+            <span className="sr-only">, switch to {dark ? 'Paper (light)' : 'Ink (dark)'} theme</span>
           </button>
         </li>
         <li className="flex items-center">
@@ -88,11 +88,11 @@ export function HUDNav() {
             type="button"
             data-magnetic
             className="hud-nav-link"
-            aria-pressed={soundOn}
-            aria-label="Interface sound"
+            data-sound-toggle
             onClick={() => void sound.setEnabled(!soundOn)}
           >
-            <span aria-hidden="true">Sound:{soundOn ? 'On' : 'Off'}</span>
+            Sound:{soundOn ? 'On' : 'Off'}
+            <span className="sr-only">, turn interface sound {soundOn ? 'off' : 'on'}</span>
           </button>
         </li>
         <li className="flex items-center">
@@ -104,13 +104,14 @@ export function HUDNav() {
             data-magnetic
             className="hud-nav-link"
             aria-haspopup="dialog"
-            aria-label="Search and quick navigation"
+            data-palette-trigger
             onClick={() => {
               sound.play('click');
               openCommandPalette();
             }}
           >
-            <span aria-hidden="true">⌘K</span>
+            ⌘K
+            <span className="sr-only">, search and quick navigation</span>
           </button>
         </li>
       </ul>

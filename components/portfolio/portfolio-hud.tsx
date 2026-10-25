@@ -17,9 +17,10 @@ export function PortfolioHUD() {
       <div aria-hidden="true" className="hud-fade" />
       <header className="hud-top">
         <div className="flex min-w-0 flex-col gap-1">
-          <Link href="/" aria-label={`${site.name}, home`} data-magnetic className="hud-brand">
+          <Link href="/" data-magnetic className="hud-brand">
             {site.name}
             <sup className="hud-year">©{new Date().getFullYear()}</sup>
+            <span className="sr-only">, home</span>
           </Link>
           <p className="hud-meta">
             <LocalClock />

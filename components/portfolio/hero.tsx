@@ -37,7 +37,7 @@ export function Hero() {
           ))}
         </h1>
 
-        <InflatedWord word={word} className="enter mx-auto -my-[2vw] w-[min(92vw,780px)]" />
+        <InflatedWord word={word} className="enter mx-auto -my-[2vw] w-full max-w-[780px]" />
 
         <div className="enter mt-6 grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end" style={{ '--i': 3 } as React.CSSProperties}>
           <div className="min-w-0">

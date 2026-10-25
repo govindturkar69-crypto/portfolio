@@ -7,11 +7,9 @@ import { Check, Copy } from './icons';
 type Props = {
   email: string;
   className?: string;
-  /** Show the address itself instead of a short label. */
-  showAddress?: boolean;
 };
 
-export function CopyEmailButton({ email, className = '', showAddress = false }: Props) {
+export function CopyEmailButton({ email, className = '' }: Props) {
   const [status, setStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
   const timer = useRef<number | undefined>(undefined);
 
@@ -29,7 +27,7 @@ export function CopyEmailButton({ email, className = '', showAddress = false }: 
   }
 
   const label =
-    status === 'copied' ? 'Copied to clipboard' : status === 'failed' ? 'Press Ctrl+C to copy' : showAddress ? email : 'Copy email';
+    status === 'copied' ? 'Copied to clipboard' : status === 'failed' ? 'Press Ctrl+C to copy' : 'Copy email';
 
   return (
     <>
@@ -47,7 +45,7 @@ export function CopyEmailButton({ email, className = '', showAddress = false }: 
             className={`absolute text-live transition duration-200 ease-out ${status === 'copied' ? 'scale-100 opacity-100' : 'scale-50 opacity-0'}`}
           />
         </span>
-        <span className={showAddress ? 'font-mono' : undefined}>{label}</span>
+        <span>{label}</span>
       </button>
       <span role="status" aria-live="polite" className="sr-only">
         {status === 'copied' ? 'Email address copied to clipboard' : status === 'failed' ? 'Copy failed' : ''}

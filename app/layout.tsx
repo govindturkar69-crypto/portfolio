@@ -6,7 +6,6 @@ import { ScrollReveal } from '@/components/portfolio/scroll-reveal';
 import { PortfolioHUD } from '@/components/portfolio/portfolio-hud';
 import { SiteFooter } from '@/components/portfolio/site-footer';
 import { site } from '@/data/site';
-import { introDecisionScript } from '@/lib/intro';
 import { THEME_COLORS, themeScript } from '@/lib/theme';
 import './globals.css';
 
@@ -42,6 +41,7 @@ export const viewport: Viewport = {
 const personJsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Person',
+  '@id': `${site.url}/#person`,
   name: site.name,
   url: site.url,
   email: `mailto:${site.email}`,
@@ -52,25 +52,42 @@ const personJsonLd = {
   knowsAbout: ['Full-stack development', 'Database internals', 'Rust', 'TypeScript', 'React', 'Retrieval-augmented generation'],
 };
 
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${site.url}/#website`,
+  url: site.url,
+  name: `${site.name} — Portfolio`,
+  description: site.description,
+  inLanguage: 'en',
+  author: { '@id': `${site.url}/#person` },
+};
+
+const FONTS_CSS = 'https://fonts.googleapis.com/css2?family=TikTok+Sans:wght@300..900&family=Geist+Mono:wght@400..600&display=swap';
+const fontLoaderScript = `(function(){var l=document.createElement('link');l.rel='stylesheet';l.href=${JSON.stringify(FONTS_CSS)};document.head.appendChild(l)})();`;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Decides before first paint whether the first-visit intro plays (sets <html data-intro>). */}
-        <script dangerouslySetInnerHTML={{ __html: introDecisionScript }} />
-        {/* Applies a stored ink (dark) choice before first paint; paper is the default. */}
+        {/* Applies the saved theme (or the system preference) before first paint. */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        {/* App Router root layout applies to every route; this rule targets pages/_document. */}
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=TikTok+Sans:wght@300..900&family=Geist+Mono:wght@400..600&display=swap"
-        />
+        {/*
+          Web fonts must not block first paint: the stylesheet is preloaded, then attached by a
+          tiny script (script-inserted stylesheets are not render-blocking). Text shows in the
+          fallback font first and swaps in (display=swap). <noscript> keeps fonts without JS.
+        */}
+        <link rel="preload" as="style" href={FONTS_CSS} />
+        <script dangerouslySetInnerHTML={{ __html: fontLoaderScript }} />
+        <noscript>
+          <link rel="stylesheet" href={FONTS_CSS} />
+        </noscript>
       </head>
       <body className="min-h-dvh">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }} />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:rounded-full focus:bg-fg focus:px-4 focus:py-2 focus:text-sm focus:text-bg"

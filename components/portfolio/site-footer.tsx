@@ -2,6 +2,7 @@ import { site } from '@/data/site';
 import { CopyEmailButton } from '../copy-email-button';
 import { ArrowUpRight, Download, GitHub, LinkedIn } from '../icons';
 import { buttonStyles, ExternalLink } from '../ui';
+import { SectionSticker } from './hero-stickers';
 import { container } from './home-sections';
 import { LocalClock } from './local-clock';
 
@@ -13,7 +14,9 @@ export function SiteFooter() {
   const [user, domain] = site.email.split('@');
   return (
     <footer id="contact" aria-labelledby="contact-title" className="site-footer">
-      <div className={`${container} pt-24 pb-10 md:pt-36`}>
+      <div className={`${container} relative pt-24 pb-10 md:pt-36`}>
+        {/* Sits in the open space right of the contact buttons, clear of the headline and the status line. */}
+        <SectionSticker kind="heart" seed={9} className="right-[8%] bottom-[8.5rem]" />
         <div className="flex items-center justify-between gap-4 border-b border-line pb-4 font-mono text-xs tracking-[0.08em] text-subtle uppercase">
           <span>(04) — Contact</span>
           <span className="flex items-center gap-2">

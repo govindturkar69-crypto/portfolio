@@ -1,18 +1,17 @@
 /**
- * Paper (light, default) / ink (dark) theme. Plain module (not 'use client') so the
+ * Paper (light) / ink (dark) theme. Plain module (not 'use client') so the
  * server layout can inline the pre-paint script.
  */
 export type Theme = 'light' | 'dark';
 
-export const THEME_KEY = 'gt-theme';
+const THEME_KEY = 'gt-theme';
 export const THEME_COLORS: Record<Theme, string> = { light: '#eeece6', dark: '#09090b' };
 
 /*
- * Runs in <head> before first paint: applies the stored choice, otherwise light.
- * The visitor's OS preference is deliberately not followed: paper is the site's identity,
- * and ink is one click away in the dock.
+ * Runs in <head> before first paint: a saved choice wins; with no saved choice the
+ * visitor's system preference decides (dark → ink, otherwise paper). No flash either way.
  */
-export const themeScript = `(function(){try{var t=localStorage.getItem('${THEME_KEY}');if(t==='dark'){document.documentElement.classList.add('dark');var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','${THEME_COLORS.dark}')}}catch(e){}})();`;
+export const themeScript = `(function(){try{var t=localStorage.getItem('${THEME_KEY}');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','${THEME_COLORS.dark}')}}catch(e){}})();`;
 
 const listeners = new Set<() => void>();
 
@@ -25,7 +24,12 @@ export const theme = {
     return () => listeners.delete(listener);
   },
   set(next: Theme) {
-    const apply = () => theme.apply(next);
+    let applied = false;
+    const apply = () => {
+      if (applied) return;
+      applied = true;
+      theme.apply(next);
+    };
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const doc = document as Document & { startViewTransition?: (update: () => void) => unknown };
     if (reduced) {
@@ -33,6 +37,9 @@ export const theme = {
     } else if (doc.startViewTransition) {
       // A whole-page crossfade: one snapshot of each theme, no per-element repaint storm.
       doc.startViewTransition(apply);
+      // The transition's update waits for a rendered frame (never comes in a hidden or
+      // throttled tab). Never let the switch depend on that: apply directly if it stalls.
+      window.setTimeout(apply, 300);
     } else {
       // Fallback: colour transitions for one switch only (never during normal hovers).
       const html = document.documentElement;

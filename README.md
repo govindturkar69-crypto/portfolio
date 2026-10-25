@@ -2,6 +2,8 @@
 
 Personal site for **Govind Turkar**, software engineer. Full-stack products, down to the storage engine.
 
+**Live:** [portfolio-two-tawny-7n56aqfw0b.vercel.app](https://portfolio-two-tawny-7n56aqfw0b.vercel.app)
+
 Hosted on **Vercel**: every push to `main` deploys automatically.
 
 ## Featured work

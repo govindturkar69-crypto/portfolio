@@ -65,8 +65,7 @@ export function CommandPalette() {
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const [notice, setNotice] = useState('');
-  // A fixed prefix: there is only ever one palette, and useId() mismatched between the
-  // server and client trees under vinext's RSC shell (hydration warning).
+  // A fixed prefix is enough: there is only ever one palette.
   const baseId = 'cmdk';
 
   const returnFocusRef = useRef<HTMLElement | null>(null);
@@ -209,8 +208,8 @@ export function CommandPalette() {
   const activeIndex = Math.min(active, Math.max(results.length - 1, 0));
 
   /**
-   * Hash targets on the current page scroll natively; vinext's client router
-   * does not scroll to a hash, so cross-page section links do a full navigation.
+   * Hash targets on the current page scroll natively; cross-page section links do a
+   * full navigation so the browser lands exactly on the section.
    */
   const navigate = useCallback(
     (href: string) => {

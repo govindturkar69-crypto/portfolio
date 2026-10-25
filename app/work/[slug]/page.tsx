@@ -62,7 +62,7 @@ export default async function CaseStudyPage({ params }: { params: Params }) {
     <article className={container}>
       <header className="pt-28 md:pt-32" /* clears the fixed HUD */>
         <div className="enter flex items-center justify-between gap-4 border-b border-line pb-4 font-mono text-xs tracking-[0.08em] text-subtle uppercase">
-          {/* Full navigation on purpose: vinext's client router does not scroll to hash targets. */}
+          {/* Full navigation on purpose, so the browser scrolls straight to the #work section. */}
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a href="/#work" className="inline-flex items-center gap-2 transition-colors duration-200 hover:text-fg">
             <ArrowLeft size={14} />

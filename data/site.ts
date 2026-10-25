@@ -1,7 +1,14 @@
 export const site = {
   name: 'Govind Turkar',
   role: 'Software Engineer',
-  url: 'https://govind-turkar-portfolio.turkargovind3.chatgpt.site',
+  /**
+   * Public address used for canonical URLs, the sitemap and share cards (server-side only).
+   * Set NEXT_PUBLIC_SITE_URL once you have a custom domain; on Vercel it otherwise defaults to
+   * the project's production address, and to localhost in development.
+   */
+  url:
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : 'http://localhost:3000'),
   email: 'govindturkar69@gmail.com',
   location: 'Nagpur, India',
   resume: '/Govind_Turkar_Resume.pdf',

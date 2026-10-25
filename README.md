@@ -2,7 +2,7 @@
 
 Personal site for **Govind Turkar**, software engineer. Full-stack products, down to the storage engine.
 
-**Live:** [govind-turkar-portfolio.turkargovind3.chatgpt.site](https://govind-turkar-portfolio.turkargovind3.chatgpt.site)
+Hosted on **Vercel**: every push to `main` deploys automatically.
 
 ## Featured work
 
@@ -64,17 +64,19 @@ Only add live links that work, and set `liveNote` if a host may need waking.
 
 ## Stack
 
-Next.js 16 App Router on vinext (Vite) · React 19 · TypeScript · Tailwind CSS v4 · GSAP · Cloudflare Workers ·
-OpenAI Sites hosting
+Next.js 16 App Router · React 19 · TypeScript · Tailwind CSS v4 · GSAP · Vercel
 
 ## Development
 
 ```bash
 pnpm install
-pnpm dev        # vinext dev server
+pnpm dev        # Next.js dev server on http://localhost:3000
 pnpm lint
-pnpm build
+pnpm build      # static production build
 ```
 
-`pnpm-workspace.yaml` still asks whether esbuild, sharp, unrs-resolver and workerd may run install scripts; answer
-those (`pnpm approve-builds`) before `pnpm run build` will run. `npx vinext build` works in the meantime.
+## Deployment
+
+Import this GitHub repository in Vercel (framework preset: Next.js, defaults are fine). Canonical URLs, the sitemap
+and share cards use Vercel's production address automatically; once you add a custom domain, set
+`NEXT_PUBLIC_SITE_URL` (for example `https://yourname.dev`) in the Vercel project's environment variables.

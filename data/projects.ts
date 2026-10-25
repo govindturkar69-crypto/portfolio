@@ -18,6 +18,10 @@ export type Project = {
   highlights: string[];
   stack: string[];
   links: { github: string; live?: string };
+  /** Honest caveat shown next to the live link, e.g. a free-tier host that sleeps when idle. */
+  liveNote?: string;
+  /** Shown on the work card, e.g. '2025' or '2024–25'. Optional: the card shows its index when unset. */
+  year?: string;
   /** Optional screenshot in /public, e.g. `/projects/scratchdb.webp` (1600×1000 recommended). */
   image?: { src: string; alt: string; width: number; height: number };
 };
@@ -87,6 +91,69 @@ export const projects: Project[] = [
     links: { github: 'https://github.com/govindturkar69-crypto/database-from-scratch' },
   },
   {
+    slug: 'java-redis',
+    name: 'Redis in Java',
+    category: 'Systems · In-memory data server',
+    tagline: 'A Redis-compatible server in plain Java 21 — RESP protocol, NIO networking, persistence and Pub/Sub, no Redis libraries.',
+    featured: true,
+    problem:
+      'A Redis-compatible server has to speak the wire protocol exactly, serve many concurrent clients without blocking, keep data structures fast under load and survive restarts — all without leaning on Netty, Redisson or an embedded Redis.',
+    approach:
+      'Built on standard Java 21 APIs only: a non-blocking NIO selector loop, a streaming RESP parser and serializer, typed data structures behind 128 striped read-write locks, append-only and snapshot persistence, Pub/Sub, transactions, TTL expiry and eviction — plus a CLI, a load generator and an HTTP telemetry dashboard.',
+    architecture: {
+      summary:
+        'Clients connect over TCP to the NIO server; frames are parsed by a streaming RESP state machine, dispatched through a command registry, executed against lock-striped databases, and written back through the serializer. Background engines handle expiry, eviction and persistence; telemetry runs on its own HTTP port.',
+      layers: [
+        { name: 'Networking', detail: 'Java NIO selector loop, per-connection read buffers and non-blocking write queues with backpressure.' },
+        { name: 'Protocol', detail: 'Streaming RESP parser that resumes across partial TCP frames, inline commands, and a RESP serializer.' },
+        { name: 'Execution', detail: 'Command registry with MULTI/EXEC/WATCH transactions and ordered multi-key lock acquisition.' },
+        { name: 'Storage', detail: 'Strings, lists, hashes, sets and sorted sets on a custom skip list, across 128 ReentrantReadWriteLock stripes.' },
+        { name: 'Background', detail: 'Active and lazy TTL expiry, LRU/TTL eviction policies, and Pub/Sub with pattern subscriptions.' },
+        { name: 'Persistence', detail: 'Append-only file with always / everysec / no fsync, plus binary snapshots for fast restarts.' },
+      ],
+    },
+    challenges: [
+      {
+        title: 'Using every core without deadlocks',
+        problem: 'A single global lock (or Redis\'s single-threaded loop) leaves cores idle, but fine-grained locks can deadlock on multi-key commands.',
+        solution: 'Partitioned keys across 128 read-write lock stripes and always acquired stripes in a canonical hash order, so MSET and transactions stay atomic without deadlock.',
+      },
+      {
+        title: 'Rank queries on sorted sets',
+        problem: 'Java\'s TreeSet cannot answer "what rank is this member?" without walking the set.',
+        solution: 'Wrote a probabilistic skip list that keeps span counts on forward pointers, giving logarithmic ZRANK and range slicing, with a companion map for score lookups.',
+      },
+      {
+        title: 'Durability versus startup speed',
+        problem: 'Logging every write is safe but slow to replay; snapshots are compact but can lose recent writes.',
+        solution: 'Supported both: an append-only log with configurable fsync and background rewrite, recovery from a truncated tail, and binary snapshots for fast restarts.',
+      },
+      {
+        title: 'Observability without touching the data port',
+        problem: 'A dashboard on the Redis port would compete with client traffic and widen its attack surface.',
+        solution: 'Ran health, metrics and a live web dashboard on a separate embedded HTTP server.',
+      },
+    ],
+    metrics: [
+      { value: '71', label: 'automated tests across 20 test files' },
+      { value: '128', label: 'lock stripes for parallel key access' },
+      { value: '5', label: 'data types, incl. skip-list sorted sets' },
+      { value: '0', label: 'Redis or networking libraries used' },
+    ],
+    highlights: [
+      'RESP protocol parser and serializer',
+      'Non-blocking NIO networking',
+      'MULTI / EXEC / WATCH transactions',
+      'Skip-list sorted sets with rank queries',
+      'AOF and snapshot persistence',
+      'TTL expiry and eviction policies',
+      'Pub/Sub with pattern matching',
+      'CLI, benchmark tool and HTTP dashboard',
+    ],
+    stack: ['Java 21', 'Java NIO', 'Maven', 'JUnit', 'Docker', 'GitHub Actions'],
+    links: { github: 'https://github.com/govindturkar69-crypto/build-your-own-redis-in-java' },
+  },
+  {
     slug: 'veridoc',
     name: 'VeriDoc',
     category: 'Applied AI · Retrieval',
@@ -144,6 +211,65 @@ export const projects: Project[] = [
       github: 'https://github.com/govindturkar69-crypto/VeriDoc',
       live: 'https://veridoc-9td5zj9kteg5cly2vnaz6b.streamlit.app/',
     },
+    liveNote: 'Streamlit app — may take a moment to wake',
+  },
+  {
+    slug: 'private-search',
+    name: 'Private Search Engine',
+    category: 'Full-stack · Search & crawling',
+    tagline: 'A self-hosted search engine — polite, SSRF-hardened crawler, SQLite inverted index, BM25 ranking and a React UI.',
+    featured: true,
+    problem:
+      'Hosted search sends every query to a third party. Running your own means crawling the web safely, indexing it efficiently and ranking results well — on a single machine, with no external search service.',
+    approach:
+      'A Python pipeline that crawls with RFC 9309 robots.txt rules and SSRF defences, extracts and de-duplicates text, writes a relational inverted index to SQLite, and ranks with BM25 — served by FastAPI to a React + TypeScript search UI and admin dashboard, with Docker, Kubernetes and Prometheus/Grafana configs.',
+    architecture: {
+      summary:
+        'Seed URLs flow through the crawler, parser and indexer into SQLite; queries come in through the FastAPI API, are ranked with BM25 and returned with snippets to the React frontend. Admin routes drive crawls and expose metrics.',
+      layers: [
+        { name: 'Crawler', detail: 'Priority URL frontier with politeness, RFC 9309 robots.txt parsing, async streaming fetcher.' },
+        { name: 'Parser', detail: 'HTML extraction, offline tokenisation and stemming, SHA-256 content de-duplication, link prioritisation.' },
+        { name: 'Indexer', detail: 'SQLite inverted index (WAL mode) with transactional, all-or-nothing batch writes.' },
+        { name: 'Ranker', detail: 'BM25 scoring with field boosting, query parsing and result snippets, behind a cache layer.' },
+        { name: 'API', detail: 'FastAPI search and admin routes, middleware, Prometheus metrics export.' },
+        { name: 'Interface', detail: 'React + TypeScript search UI with autocomplete, and an admin dashboard for crawls and config.' },
+      ],
+    },
+    challenges: [
+      {
+        title: 'A crawler that cannot be turned against its host',
+        problem: 'Hostname checks alone miss DNS rebinding, internal subdomains and redirects into private networks.',
+        solution: 'Resolved every hostname to all of its addresses, rejected non-public ranges, and re-validated on each redirect hop with manual redirect handling and loop detection.',
+      },
+      {
+        title: 'Hostile or oversized pages',
+        problem: 'A single huge or compressed response can exhaust memory.',
+        solution: 'Streamed responses with hard limits on bytes over the wire and after decompression.',
+      },
+      {
+        title: 'Respecting site owners correctly',
+        problem: 'Naive robots.txt handling either over-blocks or ignores the rules.',
+        solution: 'Implemented RFC 9309 longest-match semantics, with Allow winning ties, and kept crawl-delay as an optional extension.',
+      },
+    ],
+    metrics: [
+      { value: '391', label: 'test cases (328 backend · 63 frontend)' },
+      { value: 'BM25', label: 'ranking with field boosting' },
+      { value: '6', label: 'pipeline stages, crawl to UI' },
+      { value: '6', label: 'Kubernetes manifests, plus a secret template' },
+    ],
+    highlights: [
+      'RFC 9309 robots.txt compliance',
+      'SSRF-hardened crawler',
+      'SQLite inverted index',
+      'BM25 ranking and snippets',
+      'React search UI with autocomplete',
+      'Admin dashboard',
+      'Prometheus and Grafana monitoring',
+      'Docker and Kubernetes configs',
+    ],
+    stack: ['Python', 'FastAPI', 'SQLite', 'React', 'TypeScript', 'Docker', 'Kubernetes', 'Prometheus'],
+    links: { github: 'https://github.com/govindturkar69-crypto/Private-Search-Engine' },
   },
   {
     slug: 'nexuscode',
@@ -255,6 +381,8 @@ export const projects: Project[] = [
       github: 'https://github.com/govindturkar69-crypto/RealtyIQ',
       live: 'https://realty-iq-puce.vercel.app',
     },
+    // Captured from the live app (headless Chrome, 1600x1000) on 2026-10-24.
+    image: { src: '/projects/realtyiq.png', alt: 'RealtyIQ landing page: “Know what a property is really worth”, with Estimate a price and Browse listings buttons above a 3D bar-chart illustration.', width: 1600, height: 1000 },
   },
   {
     slug: 'aurora-weather',
@@ -297,6 +425,8 @@ export const projects: Project[] = [
       github: 'https://github.com/govindturkar69-crypto/aurora-weather',
       live: 'https://aurora-weather-six.vercel.app',
     },
+    // Captured from the live app (headless Chrome, 1920x1200) on 2026-10-24.
+    image: { src: '/projects/aurora-weather.png', alt: 'Aurora Weather dashboard for London: current conditions, sunrise and sunset arc, moon phase, a 24-hour forecast chart, conditions tiles and air-quality readings.', width: 1920, height: 1200 },
   },
   {
     slug: 'talentai',
@@ -338,7 +468,7 @@ export const projects: Project[] = [
     stack: ['Python', 'Flask', 'MySQL', 'PyPDF2', 'scikit-learn', 'Plotly'],
     links: {
       github: 'https://github.com/govindturkar69-crypto/TalentAI-Recruitment-Platform',
-      live: 'https://talentai-recruitment-platform.onrender.com',
+      // Render demo (talentai-recruitment-platform.onrender.com) did not respond when checked; re-add once it is up.
     },
   },
 ];

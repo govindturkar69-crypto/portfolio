@@ -15,12 +15,13 @@ export const site = {
 
 export const navigation = [
   { label: 'Work', href: '/#work' },
-  { label: 'Stack', href: '/#stack' },
+  { label: 'Capabilities', href: '/#capabilities' },
   { label: 'About', href: '/#about' },
   { label: 'Contact', href: '/#contact' },
 ] as const;
 
 export type TimelineEntry = {
+  kind: 'work' | 'education';
   period: string;
   title: string;
   organization: string;
@@ -30,6 +31,7 @@ export type TimelineEntry = {
 
 export const experience: TimelineEntry[] = [
   {
+    kind: 'work',
     period: '2026 — Now',
     title: 'Full Stack Developer Intern · Remote',
     organization: 'KodeKalp Global Technologies',
@@ -38,6 +40,7 @@ export const experience: TimelineEntry[] = [
       'Shipping full-stack features. Built Aurora Weather: a React interface on a typed Node/Express API with Redis cache-aside and automatic provider fallback.',
   },
   {
+    kind: 'education',
     period: '2023 — 2027',
     title: 'B.Tech, Computer Science & Engineering',
     organization: 'G H Raisoni College of Engineering, Nagpur',

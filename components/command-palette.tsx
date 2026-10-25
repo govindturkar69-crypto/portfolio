@@ -1,11 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { projects } from '@/data/projects';
 import { navigation, site } from '@/data/site';
 import { writeClipboard } from '@/lib/clipboard';
-import { ArrowUpRight, Copy, Download, GitHub, Hash, Layers, LinkedIn, Mail, Search } from './icons';
+import { Copy, Download, GitHub, Hash, Layers, LinkedIn, Mail, Search } from './icons';
 
 export const OPEN_PALETTE_EVENT = 'command-palette:open';
 
@@ -63,20 +63,49 @@ export function CommandPalette() {
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const [notice, setNotice] = useState('');
-  const baseId = useId();
+  // A fixed prefix: there is only ever one palette, and useId() mismatched between the
+  // server and client trees under vinext's RSC shell (hydration warning).
+  const baseId = 'cmdk';
+
+  const returnFocusRef = useRef<HTMLElement | null>(null);
 
   const show = useCallback(() => {
     const dialog = dialogRef.current;
     if (!dialog || dialog.open) return;
+    returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setQuery('');
     setActive(0);
     setNotice('');
+    delete dialog.dataset.closing;
     dialog.showModal();
     setOpen(true);
   }, []);
 
+  /** Plays the fade-and-scale exit (unless reduced motion), then closes and restores focus. */
   const hide = useCallback(() => {
-    dialogRef.current?.close();
+    const dialog = dialogRef.current;
+    if (!dialog?.open || dialog.dataset.closing !== undefined) return;
+    const finish = () => {
+      delete dialog.dataset.closing;
+      dialog.close();
+      returnFocusRef.current?.focus({ preventScroll: true });
+      returnFocusRef.current = null;
+    };
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      finish();
+      return;
+    }
+    dialog.dataset.closing = '';
+    // animationend can be skipped (hidden tab, interrupted animation): a timer backs it up.
+    const timer = window.setTimeout(finish, 220);
+    dialog.addEventListener(
+      'animationend',
+      () => {
+        window.clearTimeout(timer);
+        finish();
+      },
+      { once: true },
+    );
   }, []);
 
   const commands = useMemo<Command[]>(
@@ -244,8 +273,6 @@ export function CommandPalette() {
   useEffect(() => {
     if (!open) return;
     document.getElementById(optionId(activeIndex))?.scrollIntoView({ block: 'nearest' });
-    // optionId only depends on baseId, which is stable.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIndex, open]);
 
   function onInputKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -278,8 +305,13 @@ export function CommandPalette() {
     <dialog
       ref={dialogRef}
       aria-labelledby={`${baseId}-title`}
-      className="cmdk m-auto mt-[12vh] w-[calc(100%-2rem)] max-w-xl overflow-hidden rounded-2xl border border-line-strong bg-surface p-0 text-fg shadow-2xl shadow-black/60"
+      className="cmdk"
       onClose={() => setOpen(false)}
+      onCancel={(event) => {
+        // Esc: run the exit animation instead of the instant native close.
+        event.preventDefault();
+        hide();
+      }}
       onClick={(event) => {
         if (event.target === event.currentTarget) hide();
       }}
@@ -287,8 +319,8 @@ export function CommandPalette() {
       <h2 id={`${baseId}-title`} className="sr-only">
         Command menu
       </h2>
-      <div className="flex items-center gap-3 border-b border-line px-4">
-        <Search className="shrink-0 text-subtle" size={18} />
+      <div className="cmdk-search">
+        <Search className="shrink-0 text-subtle" size={17} />
         <input
           ref={inputRef}
           autoFocus
@@ -307,9 +339,9 @@ export function CommandPalette() {
           placeholder="Search projects, sections, actions…"
           spellCheck={false}
           autoComplete="off"
-          className="h-14 w-full bg-transparent text-[15px] text-fg outline-none placeholder:text-subtle"
+          className="cmdk-input"
         />
-        <kbd className="hidden rounded-md border border-line px-1.5 py-0.5 font-mono text-xs text-subtle sm:block">ESC</kbd>
+        <kbd className="cmdk-kbd hidden sm:inline-flex">esc</kbd>
       </div>
 
       <ul
@@ -317,11 +349,11 @@ export function CommandPalette() {
         id={`${baseId}-list`}
         role="listbox"
         aria-label="Commands"
-        className="max-h-[min(60vh,26rem)] overflow-y-auto overscroll-contain p-2"
+        className="cmdk-list"
       >
         {grouped.map(({ group, items }) => (
           <li key={group} role="presentation">
-            <p id={`${baseId}-${group}`} className="eyebrow px-3 pt-3 pb-1.5" aria-hidden="true">
+            <p id={`${baseId}-${group}`} className="cmdk-group" aria-hidden="true">
               {group}
             </p>
             <ul role="group" aria-labelledby={`${baseId}-${group}`}>
@@ -336,16 +368,14 @@ export function CommandPalette() {
                     aria-selected={selected}
                     onMouseMove={() => setActive(index)}
                     onClick={() => void execute(command)}
-                    className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors duration-150 ${
-                      selected ? 'bg-white/[0.07] text-fg' : 'text-muted'
-                    }`}
+                    className="cmdk-item"
                   >
-                    <span className={selected ? 'text-accent' : 'text-subtle'}>{command.icon}</span>
-                    <span className="truncate">{command.label}</span>
-                    {command.hint ? (
-                      <span className="ml-auto truncate pl-4 font-mono text-xs text-subtle">{command.hint}</span>
-                    ) : null}
-                    {selected ? <ArrowUpRight className="shrink-0 text-subtle" size={14} /> : null}
+                    <span className="cmdk-icon">{command.icon}</span>
+                    <span className="cmdk-label">{command.label}</span>
+                    {command.hint ? <span className="cmdk-hint">{command.hint}</span> : null}
+                    <kbd className="cmdk-kbd cmdk-enter" aria-hidden="true">
+                      ↵
+                    </kbd>
                   </li>
                 );
               })}
@@ -353,19 +383,31 @@ export function CommandPalette() {
           </li>
         ))}
         {results.length === 0 ? (
-          <li role="presentation" className="px-3 py-10 text-center text-sm text-subtle">
-            No results for “{query}”
+          <li role="presentation" className="cmdk-empty">
+            <span className="block text-fg">No matches for “{query}”</span>
+            <span className="mt-1 block text-subtle">Try a project name, a section, or “email”.</span>
           </li>
         ) : null}
       </ul>
 
-      <div className="flex items-center justify-between gap-4 border-t border-line px-4 py-2.5 font-mono text-xs text-subtle">
+      <div className="cmdk-footer">
         <span role="status" aria-live="polite" className={notice ? 'text-live' : undefined}>
           {notice || `${results.length} result${results.length === 1 ? '' : 's'}`}
         </span>
-        <span className="hidden gap-3 sm:flex" aria-hidden="true">
-          <span>↑↓ navigate</span>
-          <span>↵ select</span>
+        <span className="hidden items-center gap-4 sm:flex" aria-hidden="true">
+          <span className="flex items-center gap-1.5">
+            <kbd className="cmdk-kbd">↑</kbd>
+            <kbd className="cmdk-kbd">↓</kbd>
+            navigate
+          </span>
+          <span className="flex items-center gap-1.5">
+            <kbd className="cmdk-kbd">↵</kbd>
+            open
+          </span>
+          <span className="flex items-center gap-1.5">
+            <kbd className="cmdk-kbd">esc</kbd>
+            close
+          </span>
         </span>
       </div>
     </dialog>

@@ -1,10 +1,13 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { CommandPalette } from '@/components/command-palette';
-import { SiteHeader } from '@/components/site-header';
-import { SiteFooter } from '@/components/sections';
+import { CustomCursor } from '@/components/portfolio/custom-cursor';
+import { ScrollReveal } from '@/components/portfolio/scroll-reveal';
+import { PortfolioHUD } from '@/components/portfolio/portfolio-hud';
+import { SiteFooter } from '@/components/portfolio/site-footer';
 import { site } from '@/data/site';
 import { introDecisionScript } from '@/lib/intro';
+import { THEME_COLORS, themeScript } from '@/lib/theme';
 import './globals.css';
 
 const title = `${site.name} — ${site.role}`;
@@ -32,8 +35,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#09090b',
-  colorScheme: 'dark',
+  themeColor: THEME_COLORS.light,
+  colorScheme: 'light dark',
 };
 
 const personJsonLd = {
@@ -51,17 +54,19 @@ const personJsonLd = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* Decides before first paint whether the first-visit intro plays (sets <html data-intro>). */}
         <script dangerouslySetInnerHTML={{ __html: introDecisionScript }} />
+        {/* Applies a stored ink (dark) choice before first paint; paper is the default. */}
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         {/* App Router root layout applies to every route; this rule targets pages/_document. */}
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..600&family=Instrument+Serif:ital@0;1&display=swap"
+          href="https://fonts.googleapis.com/css2?family=TikTok+Sans:wght@300..900&family=Geist+Mono:wght@400..600&display=swap"
         />
       </head>
       <body className="min-h-dvh">
@@ -72,13 +77,15 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         >
           Skip to content
         </a>
-        <SiteHeader />
+        <PortfolioHUD />
         <main id="main" tabIndex={-1} className="outline-none">
           {children}
         </main>
         <SiteFooter />
         <CommandPalette />
         <div aria-hidden="true" className="film-grain" />
+        <CustomCursor />
+        <ScrollReveal />
       </body>
     </html>
   );

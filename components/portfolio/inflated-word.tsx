@@ -323,7 +323,13 @@ export function InflatedWord({ word, roughness = 0.25, className = '' }: Props) 
     };
     if (fine && !reduced) window.addEventListener('pointermove', onMove, { passive: true });
 
-    const resizeObserver = new ResizeObserver(resize);
+    // Resize on the next frame, not inside the observer callback: changing the canvas size
+    // there re-triggers layout and raises "ResizeObserver loop completed with undelivered notifications".
+    let resizeFrame = 0;
+    const resizeObserver = new ResizeObserver(() => {
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(resize);
+    });
     resizeObserver.observe(host);
     const viewObserver = new IntersectionObserver((entries) => {
       visible = entries.some((entry) => entry.isIntersecting);
@@ -345,6 +351,7 @@ export function InflatedWord({ word, roughness = 0.25, className = '' }: Props) 
 
     return () => {
       disposed = true;
+      cancelAnimationFrame(resizeFrame);
       window.removeEventListener('load', schedule);
       cancelAnimationFrame(frame);
       window.removeEventListener('pointermove', onMove);

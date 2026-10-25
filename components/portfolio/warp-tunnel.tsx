@@ -189,13 +189,19 @@ export function WarpTunnel() {
         viewObserver.observe(section);
         const onVisibility = () => start();
         document.addEventListener('visibilitychange', onVisibility);
-        const resizeObserver = new ResizeObserver(() => resize());
+        // Resize on the next frame (resizing the canvas inside the callback causes a ResizeObserver loop).
+        let resizeFrame = 0;
+        const resizeObserver = new ResizeObserver(() => {
+          cancelAnimationFrame(resizeFrame);
+          resizeFrame = requestAnimationFrame(resize);
+        });
         resizeObserver.observe(canvas);
         const themeObserver = new MutationObserver(readInk);
         themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
         return () => {
           cancelAnimationFrame(frame);
+          cancelAnimationFrame(resizeFrame);
           trigger.kill();
           themeObserver.disconnect();
           viewObserver.disconnect();

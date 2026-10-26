@@ -82,3 +82,13 @@ pnpm build      # static production build
 Import this GitHub repository in Vercel (framework preset: Next.js, defaults are fine). Canonical URLs, the sitemap
 and share cards use Vercel's production address automatically; once you add a custom domain, set
 `NEXT_PUBLIC_SITE_URL` (for example `https://yourname.dev`) in the Vercel project's environment variables.
+
+### Google Search Console
+
+1. In [Search Console](https://search.google.com/search-console), add a **URL-prefix** property for the live address.
+2. Choose the **HTML tag** method and copy only the token from `content="…"`.
+3. In Vercel → Settings → Environment Variables, add `GOOGLE_SITE_VERIFICATION` with that token, then redeploy.
+4. Click **Verify** in Search Console, then submit `sitemap.xml` under **Sitemaps**.
+5. Use **URL inspection** → **Request indexing** for the home page and each `/work/<slug>` page.
+
+Indexing usually takes days, and no setup guarantees a ranking.

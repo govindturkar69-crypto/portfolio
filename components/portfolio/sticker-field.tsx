@@ -19,11 +19,26 @@ type Body = {
   phase: 'wait' | 'fall' | 'drift';
   /** Current opacity: stickers fade while they pass behind text. */
   alpha: number;
+  /** Hover lift: grows slightly as the cursor comes close. */
+  scale: number;
+  rand: () => number;
   startAt: number;
   landY: number;
 };
 
 type Rect = { l: number; t: number; r: number; b: number };
+
+/** Small seeded PRNG (mulberry32): deterministic, so every visit plays the same paths. */
+function seeded(seed: number) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
 
 /**
  * Text (and the see-through glass word) that stickers may drift behind: they fade there, so
@@ -48,10 +63,12 @@ const STILL_SPOTS: [number, number][] = [
  * - Entrance: each sticker drops in from above the screen with its own delay and spin.
  * - Drift: a smooth wander (heading random-walk + steering), soft bounce off the screen
  *   edges and separation between stickers. Passing behind text, they fade so it stays
- *   readable. The cursor pushes nearby stickers away and tilts them.
+ *   readable. The cursor pushes nearby stickers away, tilts them and lifts them slightly.
  * - The layer sits behind the page content and ignores the pointer, so it can never block
  *   clicks, text selection or scrolling. Because it is fixed, stickers stay with you while
  *   you scroll, and nothing resets on scroll or theme change.
+ * - Paths come from a seeded generator, so they are the same on every visit; the loop starts
+ *   only after the page has loaded and the browser is idle.
  * - One rAF loop for all stickers, transforms only; paused while the tab is hidden.
  *   Phones get fewer, smaller, slower stickers. Reduced motion: still, at the screen edges.
  */
@@ -74,7 +91,7 @@ export function StickerField() {
     layer.dataset.live = '';
 
     const render = (b: Body) => {
-      b.el.style.transform = `translate3d(${(b.x - b.r).toFixed(1)}px, ${(b.y - b.r).toFixed(1)}px, 0) rotate(${b.angle.toFixed(2)}deg)`;
+      b.el.style.transform = `translate3d(${(b.x - b.r).toFixed(1)}px, ${(b.y - b.r).toFixed(1)}px, 0) rotate(${b.angle.toFixed(2)}deg) scale(${(b.scale ?? 1).toFixed(3)})`;
       if (b.alpha !== undefined) b.el.style.opacity = b.alpha.toFixed(2);
     };
 
@@ -89,25 +106,27 @@ export function StickerField() {
       };
     }
 
-    const now = performance.now();
     const bodies: Body[] = active.map((el, i) => {
       const r = el.offsetWidth / 2;
+      const rand = seeded(0x9e3779b9 ^ ((i + 1) * 2654435761));
       return {
         el,
         r,
+        rand,
         // Spread the drop points across the width so they don't arrive in a clump.
-        x: ((i + 0.5) / active.length) * W + (Math.random() - 0.5) * (W / active.length) * 0.6,
-        y: -r - 40 - Math.random() * 160,
-        vx: (Math.random() - 0.5) * 0.6,
+        x: ((i + 0.5) / active.length) * W + (rand() - 0.5) * (W / active.length) * 0.6,
+        y: -r - 40 - rand() * 160,
+        vx: (rand() - 0.5) * 0.6,
         vy: 0,
-        heading: Math.random() * Math.PI * 2,
-        speed: (small ? 0.35 : 0.55) + Math.random() * (small ? 0.25 : 0.45),
-        angle: STICKERS[i].tilt + (Math.random() - 0.5) * 30,
+        heading: rand() * Math.PI * 2,
+        speed: (small ? 0.35 : 0.55) + rand() * (small ? 0.25 : 0.45),
+        angle: STICKERS[i].tilt + (rand() - 0.5) * 30,
         tilt: STICKERS[i].tilt,
         phase: 'wait',
         alpha: 1,
-        startAt: now + field.delay * 1000 + i * field.stagger * 1000,
-        landY: H * (0.25 + Math.random() * 0.5),
+        scale: 1,
+        startAt: Infinity, // set when the loop starts (after load + idle)
+        landY: H * (0.25 + rand() * 0.5),
       };
     });
     bodies.forEach(render);
@@ -131,7 +150,7 @@ export function StickerField() {
     };
     const overlaps = (b: Body, o: Rect) => !(b.x + b.r < o.l || b.x - b.r > o.r || b.y + b.r < o.t || b.y - b.r > o.b);
     const onScroll = () => {
-      if (performance.now() - lastScan > 120) scan();
+      if (performance.now() - lastScan > 250) scan();
     };
 
     const pointer = { x: -9999, y: -9999 };
@@ -148,7 +167,7 @@ export function StickerField() {
     const step = (t: number) => {
       const dt = Math.min((t - (last || t)) / 16.67, 3);
       last = t;
-      if (t - lastScan > 300) scan();
+      if (t - lastScan > 600) scan();
       const top = 84; // keep clear of the HUD row
       for (const b of bodies) {
         if (b.phase === 'wait') {
@@ -167,7 +186,7 @@ export function StickerField() {
           }
         } else {
           // Wander: the heading takes a smooth random walk; velocity eases toward it.
-          b.heading += (Math.random() - 0.5) * 0.18 * dt;
+          b.heading += (b.rand() - 0.5) * 0.18 * dt;
           let ax = (Math.cos(b.heading) * b.speed - b.vx) * 0.02;
           let ay = (Math.sin(b.heading) * b.speed - b.vy) * 0.02;
 
@@ -178,21 +197,24 @@ export function StickerField() {
           if (b.y < top + b.r) ay += (top + b.r - b.y) * 0.004;
           if (b.y > H - b.r - m) ay -= (b.y - (H - b.r - m)) * 0.004;
           if (b.x < b.r + m || b.x > W - b.r - m || b.y < top + b.r || b.y > H - b.r - m) {
-            b.heading = Math.atan2(H / 2 - b.y, W / 2 - b.x) + (Math.random() - 0.5);
+            b.heading = Math.atan2(H / 2 - b.y, W / 2 - b.x) + (b.rand() - 0.5);
           }
 
-          // Cursor: an eased push away from the pointer, plus a tilt.
+          // Cursor: an eased push away from the pointer, a tilt, and a slight lift.
+          let near = 0;
           if (finePointer) {
             const dx = b.x - pointer.x;
             const dy = b.y - pointer.y;
             const d = Math.hypot(dx, dy);
             const reach = field.cursorRadius + b.r;
             if (d > 0 && d < reach) {
-              const f = (1 - d / reach) ** 2 * 0.6;
+              near = 1 - d / reach;
+              const f = near ** 2 * 0.6;
               ax += (dx / d) * f;
               ay += (dy / d) * f;
             }
           }
+          b.scale += (1 + near * 0.1 - b.scale) * 0.12 * dt;
 
           b.vx += ax * dt;
           b.vy += ay * dt;
@@ -247,8 +269,20 @@ export function StickerField() {
       scan();
     };
 
-    scan();
-    start();
+    let idleHandle = 0;
+    const begin = () => {
+      const t0 = performance.now();
+      bodies.forEach((b, i) => (b.startAt = t0 + field.delay * 1000 + i * field.stagger * 1000));
+      scan();
+      start();
+    };
+    const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
+    const schedule = () => {
+      if (idle) idleHandle = idle(begin, { timeout: 1500 });
+      else idleHandle = window.setTimeout(begin, 200);
+    };
+    if (document.readyState === 'complete') schedule();
+    else window.addEventListener('load', schedule, { once: true });
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onResize);
     window.addEventListener('pointermove', onMove, { passive: true });
@@ -256,6 +290,9 @@ export function StickerField() {
     document.addEventListener('visibilitychange', start);
     return () => {
       cancelAnimationFrame(frame);
+      window.removeEventListener('load', schedule);
+      (window as Window & { cancelIdleCallback?: (h: number) => void }).cancelIdleCallback?.(idleHandle);
+      window.clearTimeout(idleHandle);
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
       window.removeEventListener('pointermove', onMove);

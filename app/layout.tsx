@@ -9,7 +9,7 @@ import { site } from '@/data/site';
 import { THEME_COLORS, themeScript } from '@/lib/theme';
 import './globals.css';
 
-const title = `${site.name} — ${site.role}`;
+const title = `${site.name} — Full-Stack Software Engineer`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -30,6 +30,8 @@ export const metadata: Metadata = {
   },
   twitter: { card: 'summary_large_image', title, description: site.description, images: ['/og.png'] },
   robots: { index: true, follow: true },
+  // Set GOOGLE_SITE_VERIFICATION in Vercel to the token Search Console gives you (HTML tag method).
+  ...(process.env.GOOGLE_SITE_VERIFICATION ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } } : {}),
   icons: { icon: '/favicon.svg' },
 };
 

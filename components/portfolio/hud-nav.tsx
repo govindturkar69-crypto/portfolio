@@ -12,12 +12,16 @@ import { openCommandPalette } from '../command-palette';
  * controls (theme, sound, search). The active link follows the section in view via an
  * IntersectionObserver band across the middle of the viewport (no scroll listener).
  */
+const isApple = () => /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent);
+const noSubscribe = () => () => {};
+
 export function HUDNav() {
   const pathname = usePathname();
   const [active, setActive] = useState<string | null>(null);
   const soundOn = useSyncExternalStore(sound.subscribe, sound.isEnabled, () => false);
   // Server snapshot is light; the head script may already have applied dark before hydration.
   const dark = useSyncExternalStore(theme.subscribe, () => theme.get() === 'dark', () => false);
+  const apple = useSyncExternalStore(noSubscribe, isApple, () => true);
 
   useEffect(() => {
     if (pathname !== '/') return;
@@ -110,7 +114,7 @@ export function HUDNav() {
               openCommandPalette();
             }}
           >
-            ⌘K
+            {apple ? '⌘K' : 'Ctrl K'}
             <span className="sr-only">, search and quick navigation</span>
           </button>
         </li>

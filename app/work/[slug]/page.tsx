@@ -7,6 +7,7 @@ import { container } from '@/components/portfolio/home-sections';
 import { ProjectCover } from '@/components/portfolio/project-cover';
 import { buttonStyles, ExternalLink } from '@/components/ui';
 import { getProject, projects } from '@/data/projects';
+import { site } from '@/data/site';
 
 type Params = Promise<{ slug: string }>;
 
@@ -55,11 +56,24 @@ export default async function CaseStudyPage({ params }: { params: Params }) {
   const project = getProject((await params).slug);
   if (!project) notFound();
 
+  // Structured data: only facts from the project data (all repositories verified on GitHub).
+  const sourceCodeJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareSourceCode',
+    name: project.name,
+    description: project.tagline,
+    url: `${site.url}/work/${project.slug}`,
+    codeRepository: project.links.github,
+    keywords: project.stack.join(', '),
+    author: { '@type': 'Person', '@id': `${site.url}/#person`, name: site.name, url: site.url },
+    ...(project.image ? { image: `${site.url}${project.image.src}` } : {}),
+  };
   const index = projects.findIndex((entry) => entry.slug === project.slug);
   const next = projects[(index + 1) % projects.length];
 
   return (
     <article className={container}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(sourceCodeJsonLd) }} />
       <header className="pt-28 md:pt-32" /* clears the fixed HUD */>
         <div className="enter flex items-center justify-between gap-4 border-b border-line pb-4 font-mono text-xs tracking-[0.08em] text-subtle uppercase">
           {/* Full navigation on purpose, so the browser scrolls straight to the #work section. */}

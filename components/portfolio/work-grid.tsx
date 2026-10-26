@@ -7,6 +7,7 @@ import { sound } from '@/lib/sound';
 import { ArrowLeft, ArrowRight, ArrowUpRight, GitHub } from '../icons';
 import { buttonStyles, ExternalLink } from '../ui';
 import { coverTheme, ProjectCover } from './project-cover';
+import { ProjectGalaxy } from './project-galaxy';
 
 const HASH_PREFIX = '#project/';
 const slugFromHash = () => (window.location.hash.startsWith(HASH_PREFIX) ? decodeURIComponent(window.location.hash.slice(HASH_PREFIX.length)) : null);
@@ -57,13 +58,17 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
     return () => window.removeEventListener('popstate', sync);
   }, [projects, show, hide]);
 
-  const open = (event: MouseEvent<HTMLAnchorElement>, slug: string) => {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
-    event.preventDefault();
-    openerRef.current = event.currentTarget;
+  const openProject = (slug: string, opener: HTMLElement) => {
+    openerRef.current = opener;
     sound.play('click');
     history.pushState({ project: slug }, '', `${HASH_PREFIX}${slug}`);
     show(slug);
+  };
+
+  const open = (event: MouseEvent<HTMLAnchorElement>, slug: string) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    event.preventDefault();
+    openProject(slug, event.currentTarget);
   };
 
   const close = () => {
@@ -87,6 +92,8 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
 
   return (
     <>
+      <ProjectGalaxy projects={projects} onOpen={openProject} />
+
       <ul className="grid gap-x-5 gap-y-14 md:grid-cols-2 md:gap-y-20 lg:gap-x-8">
         {projects
           .filter((entry) => entry.featured)

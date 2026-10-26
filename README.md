@@ -10,10 +10,12 @@ Hosted on **Vercel**: every push to `main` deploys automatically.
 
 - **Hero** — a WebGL glass word, résumé download, copy-email button, and an availability indicator with direct
   GitHub, LinkedIn and Contact links.
-- **Work** — featured project cards with category, stack, an architecture line (the project's top layers) and
+- **Work** — a 3D project galaxy (every project as a glass panel with a drawing of what it does; hover, tap or
+  tab to explore, click to open), then featured project cards with category, stack, an architecture line (the project's top layers) and
   Case study / Source / Live demo links; the rest as compact rows. Each project opens in an overlay
   (`#project/<slug>` deep links) and has a full case study at `/work/<slug>`.
-- **Capabilities, About, Contact** — principles, milestones, timeline, and a contact footer on every page.
+- **Capabilities, About, Contact** — an animated "stack in orbit" scene (the capability groups on rings around a
+  glowing core), principles, milestones, timeline, and a contact footer on every page.
 - **Navigation** — a fixed HUD with Work / About / Contact links, theme and sound toggles, and a résumé download.
 - **Floating stickers** — technology stickers fall in from above, then drift within bounded areas across the page.
 
@@ -45,6 +47,9 @@ components/
     sticker-field.tsx       Page-wide floating sticker layer; art in sticker-art.tsx
     home-sections.tsx       Intro, Work, Capabilities and About sections
     work-grid.tsx           Featured cards, compact rows and the project overlay; covers in project-cover.tsx
+    project-galaxy.tsx      Work: interactive 3D project galaxy (real links + selected-project panel)
+    dev-universe.tsx        About: the stack in orbit
+    scene.ts                Shared canvas 3D helpers: projection, DPR sizing, on-screen-only loop, reduced motion
     warp-tunnel.tsx         Scroll-linked starfield with the three statements
     portfolio-hud.tsx       Fixed HUD: brand, clock, weather, pointer readout and hud-nav.tsx
     site-footer.tsx         Contact section and footer (every page)
@@ -62,6 +67,8 @@ public/                   Résumé PDF, project screenshots, OG image, favicon
 - **Stickers.** A fixed layer behind the content: each sticker falls in, then wanders on a seeded (deterministic)
   path, eases away from the cursor and fades while it passes behind text. Tune counts and timing in
   `portfolioConfig.stickers.field`. Phones get fewer, smaller stickers; reduced motion shows them still.
+- **3D scenes.** Plain canvas 2D with a small perspective projection (no 3D library). They start after load +
+  idle, animate only while on screen, and draw a single still frame under reduced motion.
 - **Accessibility.** Semantic landmarks, skip link, visible focus, WCAG AA contrast on every token, label-in-name
   controls, and `prefers-reduced-motion` respected everywhere.
 

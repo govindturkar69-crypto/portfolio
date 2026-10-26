@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { Fragment } from 'react';
 import Link from 'next/link';
 import { getProject, projects } from '@/data/projects';
@@ -6,6 +5,7 @@ import { experience, site, type TimelineEntry } from '@/data/site';
 import { alsoUsed, stackGroups } from '@/data/stack';
 import { ArrowUpRight, Download, GitHub, LinkedIn } from '../icons';
 import { ExternalLink } from '../ui';
+import { DevUniverse } from './dev-universe';
 import { WorkGrid } from './work-grid';
 
 export const container = 'mx-auto w-full max-w-[88rem] px-4 sm:px-6 lg:px-10';
@@ -227,18 +227,14 @@ export function AboutSection() {
       />
 
       <div className="grid gap-14 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-20">
-        {/* Left: portrait and quick facts. Sticky on large screens, below the fixed HUD. */}
+        {/* Left: the stack in orbit, and quick facts. Sticky on large screens, below the fixed HUD. */}
         <aside className="self-start lg:sticky lg:top-28">
           <figure data-reveal="rise">
-            <div className="about-portrait">
-              <Image
-                src="/govind-3d-avatar.webp"
-                alt={`3D portrait illustration of ${site.name}`}
-                width={1000}
-                height={929}
-                sizes="(min-width: 1024px) 30vw, (min-width: 640px) 60vw, 100vw"
-                className="h-full w-full object-contain object-bottom pt-10"
-              />
+            <div className="about-universe">
+              <DevUniverse />
+              <span aria-hidden="true" className="about-universe-tag">
+                fig. 01 — the stack, in orbit
+              </span>
             </div>
             <figcaption className="mt-4 flex items-baseline justify-between gap-4">
               <span className="text-base font-semibold tracking-[-0.01em]">{site.name}</span>

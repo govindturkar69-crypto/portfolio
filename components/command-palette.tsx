@@ -15,7 +15,7 @@ export function openCommandPalette() {
   window.dispatchEvent(new Event(OPEN_PALETTE_EVENT));
 }
 
-type Group = 'Navigate' | 'Projects' | 'Actions' | 'Elsewhere';
+type Group = 'Navigation' | 'Projects' | 'Actions' | 'Profiles';
 
 type Action =
   | { type: 'route'; href: string }
@@ -30,12 +30,15 @@ type Command = {
   label: string;
   group: Group;
   icon: ReactNode;
+  /** One line under the label saying what the command does. */
+  description?: string;
+  /** Short right-hand context (category, main tech); hidden on narrow screens. */
   hint?: string;
   keywords?: string;
   action: Action;
 };
 
-const groupOrder: Group[] = ['Navigate', 'Projects', 'Actions', 'Elsewhere'];
+const groupOrder: Group[] = ['Navigation', 'Projects', 'Actions', 'Profiles'];
 
 function isEditable(target: EventTarget | null) {
   return (
@@ -44,12 +47,19 @@ function isEditable(target: EventTarget | null) {
   );
 }
 
+const SECTION_DESCRIPTIONS: Record<string, string> = {
+  Work: 'Selected projects and case studies',
+  Capabilities: 'Skills grouped by engineering layer',
+  About: 'Background, experience and education',
+  Contact: 'Email, résumé and profiles',
+};
+
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /** Every query token must match the start of a word, so "rag" finds RAG but not "storage". */
 function matches(command: Command, query: string) {
   if (!query) return true;
-  const haystack = `${command.label} ${command.group} ${command.keywords ?? ''}`;
+  const haystack = `${command.label} ${command.group} ${command.description ?? ''} ${command.keywords ?? ''}`;
   return query
     .split(/\s+/)
     .filter(Boolean)
@@ -114,18 +124,18 @@ export function CommandPalette() {
       {
         id: 'nav-home',
         label: 'Home',
-        group: 'Navigate' as const,
+        group: 'Navigation' as const,
         icon: <Hash />,
-        hint: 'Top of page',
+        description: 'Back to the top of the page',
         keywords: 'start hero top',
         action: { type: 'route' as const, href: '/#top' },
       },
       ...navigation.map((item) => ({
         id: `nav-${item.label}`,
         label: item.label,
-        group: 'Navigate' as const,
+        group: 'Navigation' as const,
         icon: <Hash />,
-        hint: 'Section',
+        description: SECTION_DESCRIPTIONS[item.label] ?? `Jump to ${item.label}`,
         action: { type: 'route' as const, href: item.href },
       })),
       ...projects.map((project) => ({
@@ -133,7 +143,8 @@ export function CommandPalette() {
         label: project.name,
         group: 'Projects' as const,
         icon: <Layers />,
-        hint: project.category,
+        description: project.tagline,
+        hint: project.stack[0],
         keywords: `${project.tagline} ${project.stack.join(' ')} case study`,
         action: { type: 'route' as const, href: `/work/${project.slug}` },
       })),
@@ -142,7 +153,7 @@ export function CommandPalette() {
         label: 'Copy email address',
         group: 'Actions',
         icon: <Copy />,
-        hint: site.email,
+        description: site.email,
         keywords: 'contact mail clipboard',
         action: { type: 'copy-email' },
       },
@@ -151,15 +162,16 @@ export function CommandPalette() {
         label: 'Send an email',
         group: 'Actions',
         icon: <Mail />,
+        description: 'Opens your mail app',
         keywords: 'contact mailto hire',
         action: { type: 'mailto' },
       },
       {
         id: 'theme',
-        label: 'Switch theme (Paper / Ink)',
+        label: 'Switch theme',
         group: 'Actions',
         icon: <Layers />,
-        hint: 'Light / dark',
+        description: 'Toggle between Paper (light) and Ink (dark)',
         keywords: 'dark light mode appearance paper ink colour color',
         action: { type: 'theme' },
       },
@@ -168,6 +180,7 @@ export function CommandPalette() {
         label: 'Download résumé',
         group: 'Actions',
         icon: <Download />,
+        description: 'Govind Turkar — résumé',
         hint: 'PDF',
         keywords: 'resume cv pdf',
         action: { type: 'download', href: site.resume },
@@ -175,18 +188,20 @@ export function CommandPalette() {
       {
         id: 'github',
         label: 'GitHub',
-        group: 'Elsewhere',
+        group: 'Profiles',
         icon: <GitHub />,
-        hint: 'Opens in a new tab',
+        description: 'Source code for every project',
+        hint: 'New tab',
         keywords: 'code source repositories',
         action: { type: 'external', href: site.github },
       },
       {
         id: 'linkedin',
         label: 'LinkedIn',
-        group: 'Elsewhere',
+        group: 'Profiles',
         icon: <LinkedIn />,
-        hint: 'Opens in a new tab',
+        description: 'Experience and profile',
+        hint: 'New tab',
         keywords: 'profile connect',
         action: { type: 'external', href: site.linkedin },
       },
@@ -342,7 +357,7 @@ export function CommandPalette() {
         Command menu
       </h2>
       <div className="cmdk-search">
-        <Search className="shrink-0 text-subtle" size={17} />
+        <Search className="cmdk-search-icon" size={17} />
         <input
           ref={inputRef}
           autoFocus
@@ -376,7 +391,8 @@ export function CommandPalette() {
         {grouped.map(({ group, items }) => (
           <li key={group} role="presentation">
             <p id={`${baseId}-${group}`} className="cmdk-group" aria-hidden="true">
-              {group}
+              <span>{group}</span>
+              <span className="cmdk-group-count">{items.length}</span>
             </p>
             <ul role="group" aria-labelledby={`${baseId}-${group}`}>
               {items.map((command) => {
@@ -393,7 +409,10 @@ export function CommandPalette() {
                     className="cmdk-item"
                   >
                     <span className="cmdk-icon">{command.icon}</span>
-                    <span className="cmdk-label">{command.label}</span>
+                    <span className="cmdk-text">
+                      <span className="cmdk-label">{command.label}</span>
+                      {command.description ? <span className="cmdk-desc">{command.description}</span> : null}
+                    </span>
                     {command.hint ? <span className="cmdk-hint">{command.hint}</span> : null}
                     <kbd className="cmdk-kbd cmdk-enter" aria-hidden="true">
                       ↵

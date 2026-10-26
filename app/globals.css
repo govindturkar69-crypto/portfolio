@@ -1034,14 +1034,37 @@
     }
   }
 
-  /* About: the stack-in-orbit scene (always a night scene, framed like the project covers). */
+  /* Work: the architecture visual beside the heading (below it on smaller screens), unframed. */
+  .work-system {
+    position: relative;
+    height: clamp(15rem, 62vw, 20rem);
+    margin-top: 1.5rem;
+    pointer-events: none;
+    -webkit-mask-image: radial-gradient(closest-side, #000 88%, transparent);
+    mask-image: radial-gradient(closest-side, #000 88%, transparent);
+  }
+
+  @media (min-width: 1024px) {
+    .section-intro-art {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    .work-system {
+      height: 20rem;
+      margin-top: 2rem;
+    }
+  }
+
+  /* About: the living code lattice, unframed; its edges fade into the page. */
   .about-universe {
     position: relative;
     aspect-ratio: 1 / 1;
-    overflow: hidden;
-    border: 1px solid var(--color-line);
-    border-radius: 6px;
-    background: radial-gradient(80% 70% at 50% 48%, #151d45, #0a0e24 55%, #04060e);
+    pointer-events: none;
+    -webkit-mask-image: radial-gradient(closest-side, #000 78%, transparent);
+    mask-image: radial-gradient(closest-side, #000 78%, transparent);
   }
 
   @media (min-width: 640px) and (max-width: 1023.98px) {
@@ -1054,167 +1077,6 @@
     .about-universe {
       aspect-ratio: 4 / 4.6;
     }
-  }
-
-  .about-universe-tag {
-    position: absolute;
-    left: 0.85rem;
-    bottom: 0.7rem;
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgb(200 212 255 / 0.55);
-    pointer-events: none;
-  }
-
-  /* Work: project galaxy — the stage, its real link nodes, and the selected-project panel. */
-  .galaxy {
-    display: grid;
-    gap: 1.25rem;
-    margin-bottom: clamp(4rem, 8vw, 6.5rem);
-  }
-
-  @media (min-width: 1024px) {
-    .galaxy {
-      grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
-      gap: 1.5rem;
-    }
-  }
-
-  .galaxy-stage {
-    position: relative;
-    aspect-ratio: 1 / 1.05;
-    overflow: hidden;
-    isolation: isolate;
-    border: 1px solid var(--color-line);
-    border-radius: clamp(14px, 1.4vw, 22px);
-    background: radial-gradient(75% 70% at 50% 48%, #141a3c, #090c20 55%, #04050c);
-    touch-action: pan-y;
-  }
-
-  @media (min-width: 560px) {
-    .galaxy-stage {
-      aspect-ratio: 16 / 10;
-    }
-  }
-
-  .galaxy-stage ul {
-    position: absolute;
-    inset: 0;
-  }
-
-  .galaxy-hint {
-    position: absolute;
-    left: 0.9rem;
-    top: 0.75rem;
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgb(200 212 255 / 0.55);
-    pointer-events: none;
-  }
-
-  .galaxy-node {
-    position: absolute;
-    width: 3.25rem;
-    height: 3.25rem;
-    margin: -1.625rem 0 0 -1.625rem;
-    border-radius: 999px;
-    will-change: transform;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  /* Larger stages draw larger glass panels: the hit area matches them. */
-  @media (min-width: 560px) {
-    .galaxy-node {
-      width: 4.25rem;
-      height: 3.5rem;
-      margin: -1.75rem 0 0 -2.125rem;
-      border-radius: 0.75rem;
-    }
-  }
-
-  .galaxy-node:focus-visible {
-    outline: 2px solid var(--node-accent, #8ab4ff);
-    outline-offset: 2px;
-  }
-
-  .galaxy-label {
-    --shift: 0px;
-    --shift-y: 0px;
-    position: absolute;
-    top: calc(100% + 0.15rem);
-    left: 50%;
-    transform: translate(calc(-50% + var(--shift)), var(--shift-y));
-    padding: 0.15rem 0.5rem;
-    border: 1px solid rgb(150 175 255 / 0.22);
-    border-radius: 999px;
-    background: rgb(8 11 28 / 0.72);
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    letter-spacing: 0.02em;
-    white-space: nowrap;
-    color: rgb(226 232 255 / 0.82);
-    transition: color 0.2s, border-color 0.2s, background-color 0.2s;
-  }
-
-  .galaxy-node[data-active] .galaxy-label {
-    border-color: var(--node-accent, #8ab4ff);
-    color: #fff;
-    background: rgb(8 11 28 / 0.9);
-  }
-
-  /* Phones: only the selected project is labelled (the panel below names it too). */
-  @media (max-width: 639.98px) {
-    .galaxy-node:not([data-active]) .galaxy-label {
-      opacity: 0;
-    }
-  }
-
-  /* Positioned so it paints above the sticker layer, like the stage beside it. */
-  .galaxy-panel {
-    position: relative;
-    min-width: 0;
-    padding: clamp(1.1rem, 2vw, 1.6rem);
-    border: 1px solid var(--color-line);
-    border-radius: clamp(14px, 1.4vw, 22px);
-    background: var(--color-surface);
-  }
-
-  .galaxy-swatch {
-    display: inline-block;
-    width: 0.55rem;
-    height: 0.55rem;
-    margin-right: 0.6rem;
-    border-radius: 999px;
-    vertical-align: 0.35em;
-  }
-
-  .galaxy-eyebrow {
-    margin-top: 1.25rem;
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--color-subtle);
-  }
-
-  .galaxy-flow {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem 0;
-    margin-top: 0.5rem;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--color-fg);
-  }
-
-  .galaxy-flow li:not(:last-child)::after {
-    content: '→';
-    margin: 0 0.45rem;
-    color: var(--color-subtle);
   }
 
   .about-fact {

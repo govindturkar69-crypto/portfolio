@@ -10,12 +10,13 @@ Hosted on **Vercel**: every push to `main` deploys automatically.
 
 - **Hero** — a WebGL glass word, résumé download, copy-email button, and an availability indicator with direct
   GitHub, LinkedIn and Contact links.
-- **Work** — a 3D project galaxy (every project as a glass panel with a drawing of what it does; hover, tap or
-  tab to explore, click to open), then featured project cards with category, stack, an architecture line (the project's top layers) and
-  Case study / Source / Live demo links; the rest as compact rows. Each project opens in an overlay
+- **In short** — the opening statement beside an animated system orbit (glass core, orbits, services lit in turn).
+- **Work** — beside the heading, a layered architecture view built from each project's real layers (it cycles
+  through the featured projects and follows the card you hover or focus); then featured project cards with
+  category, stack, an architecture line and Case study / Source / Live demo links; the rest as compact rows. Each project opens in an overlay
   (`#project/<slug>` deep links) and has a full case study at `/work/<slug>`.
-- **Capabilities, About, Contact** — an animated "stack in orbit" scene (the capability groups on rings around a
-  glowing core), principles, milestones, timeline, and a contact footer on every page.
+- **Capabilities, About, Contact** — a living code lattice (a turning geodesic wireframe with data moving across
+  it, nodes labelled with the capability groups), principles, milestones, timeline, and a contact footer.
 - **Navigation** — a fixed HUD with Work / About / Contact links, theme and sound toggles, and a résumé download.
 - **Floating stickers** — technology stickers fall in from above, then drift within bounded areas across the page.
 
@@ -47,9 +48,11 @@ components/
     sticker-field.tsx       Page-wide floating sticker layer; art in sticker-art.tsx
     home-sections.tsx       Intro, Work, Capabilities and About sections
     work-grid.tsx           Featured cards, compact rows and the project overlay; covers in project-cover.tsx
-    project-galaxy.tsx      Work: interactive 3D project galaxy (real links + selected-project panel)
-    dev-universe.tsx        About: the stack in orbit
-    scene.ts                Shared canvas 3D helpers: projection, DPR sizing, on-screen-only loop, reduced motion
+    system-orbit.tsx        In short: system orbit
+    system-architecture.tsx Work: layered architecture of the hovered / featured project (lib/project-focus.ts)
+    dev-universe.tsx        About: living code lattice
+    scene.ts                Shared canvas 3D helpers: projection, theme palette, DPR sizing, on-screen-only loop,
+                            reduced motion
     warp-tunnel.tsx         Scroll-linked starfield with the three statements
     portfolio-hud.tsx       Fixed HUD: brand, clock, weather, pointer readout and hud-nav.tsx
     site-footer.tsx         Contact section and footer (every page)
@@ -57,7 +60,8 @@ components/
     custom-cursor.tsx       Directional cursor with magnetic snapping (fine pointers only)
   architecture-diagram.tsx copy-email-button.tsx icons.tsx ui.tsx
 data/                     projects.ts, site.ts, stack.ts — all content lives here
-lib/                      portfolio-config.ts (copy + motion settings), theme.ts, sound.ts, clipboard.ts
+lib/                      portfolio-config.ts (copy + motion settings), theme.ts, sound.ts, clipboard.ts,
+                          project-focus.ts
 public/                   Résumé PDF, project screenshots, OG image, favicon
 ```
 
@@ -67,7 +71,8 @@ public/                   Résumé PDF, project screenshots, OG image, favicon
 - **Stickers.** A fixed layer behind the content: each sticker falls in, then wanders on a seeded (deterministic)
   path, eases away from the cursor and fades while it passes behind text. Tune counts and timing in
   `portfolioConfig.stickers.field`. Phones get fewer, smaller stickers; reduced motion shows them still.
-- **3D scenes.** Plain canvas 2D with a small perspective projection (no 3D library). They start after load +
+- **3D scenes.** Transparent canvases (no frames; edges fade into the page) with a small perspective projection
+  and one shared palette per theme (no 3D library). They start after load +
   idle, animate only while on screen, and draw a single still frame under reduced motion.
 - **Accessibility.** Semantic landmarks, skip link, visible focus, WCAG AA contrast on every token, label-in-name
   controls, and `prefers-reduced-motion` respected everywhere.

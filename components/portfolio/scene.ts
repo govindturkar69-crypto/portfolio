@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useRef, type RefObject } from 'react';
+import { theme } from '@/lib/theme';
 
 /*
- * Tiny 3D-on-canvas toolkit shared by the About universe and the Work galaxy.
+ * Tiny 3D-on-canvas toolkit shared by the In-short orbit, the About lattice and the Work architecture.
  *
  * No 3D library: a handful of rotations and a perspective divide on a 2D canvas are enough
  * for rings, particles and wireframes, and cost a few kilobytes instead of a WebGL engine.
@@ -54,6 +55,20 @@ export function seeded(seed: number) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
+
+/**
+ * One palette for every scene, so they read as one system: additive blue light on Ink,
+ * ink-blue strokes on Paper. Canvases are transparent, so the page background shows through.
+ */
+export type Palette = { dark: boolean; line: string; glow: string; dot: string; label: string; blend: GlobalCompositeOperation };
+
+const PALETTES: Record<'dark' | 'light', Palette> = {
+  dark: { dark: true, line: '150,180,255', glow: '90,130,255', dot: '205,222,255', label: '220,230,255', blend: 'lighter' },
+  light: { dark: false, line: '42,79,214', glow: '42,79,214', dot: '29,58,166', label: '20,19,17', blend: 'source-over' },
+};
+
+export const palette = () => (document.documentElement.classList.contains('dark') ? PALETTES.dark : PALETTES.light);
+export const rgba = (rgb: string, a: number) => `rgba(${rgb},${clamp(a, 0, 1).toFixed(3)})`;
 
 export type Frame = {
   ctx: CanvasRenderingContext2D;
@@ -223,6 +238,9 @@ export function useScene(canvasRef: RefObject<HTMLCanvasElement | null>, draw: (
       if (started && !raf) (frame.reduced ? still : render)();
     };
 
+    // A still frame (reduced motion, or a paused scene) must follow theme switches.
+    const offTheme = theme.subscribe(() => invalidateRef.current());
+
     window.addEventListener('pointermove', onMove, { passive: true });
     document.addEventListener('visibilitychange', sync);
     motion.addEventListener('change', onMotion);
@@ -237,6 +255,7 @@ export function useScene(canvasRef: RefObject<HTMLCanvasElement | null>, draw: (
       window.removeEventListener('pointermove', onMove);
       document.removeEventListener('visibilitychange', sync);
       motion.removeEventListener('change', onMotion);
+      offTheme();
       invalidateRef.current = () => {};
     };
   }, [canvasRef]);

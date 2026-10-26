@@ -1,13 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type MouseEvent, type PointerEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type FocusEvent, type MouseEvent, type PointerEvent } from 'react';
 import { soloProjects, type Project } from '@/data/projects';
+import { projectFocus } from '@/lib/project-focus';
 import { sound } from '@/lib/sound';
 import { ArrowLeft, ArrowRight, ArrowUpRight, GitHub } from '../icons';
 import { buttonStyles, ExternalLink } from '../ui';
 import { coverTheme, ProjectCover } from './project-cover';
-import { ProjectGalaxy } from './project-galaxy';
 
 const HASH_PREFIX = '#project/';
 const slugFromHash = () => (window.location.hash.startsWith(HASH_PREFIX) ? decodeURIComponent(window.location.hash.slice(HASH_PREFIX.length)) : null);
@@ -58,17 +58,13 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
     return () => window.removeEventListener('popstate', sync);
   }, [projects, show, hide]);
 
-  const openProject = (slug: string, opener: HTMLElement) => {
-    openerRef.current = opener;
-    sound.play('click');
-    history.pushState({ project: slug }, '', `${HASH_PREFIX}${slug}`);
-    show(slug);
-  };
-
   const open = (event: MouseEvent<HTMLAnchorElement>, slug: string) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
     event.preventDefault();
-    openProject(slug, event.currentTarget);
+    openerRef.current = event.currentTarget;
+    sound.play('click');
+    history.pushState({ project: slug }, '', `${HASH_PREFIX}${slug}`);
+    show(slug);
   };
 
   const close = () => {
@@ -92,8 +88,6 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
 
   return (
     <>
-      <ProjectGalaxy projects={projects} onOpen={openProject} />
-
       <ul className="grid gap-x-5 gap-y-14 md:grid-cols-2 md:gap-y-20 lg:gap-x-8">
         {projects
           .filter((entry) => entry.featured)
@@ -140,6 +134,23 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
   );
 }
 
+/** Tell the architecture visual which project is under the pointer (mouse) or keyboard focus. */
+function focusHandlers(slug: string) {
+  return {
+    onPointerEnter: (event: PointerEvent<HTMLElement>) => {
+      if (event.pointerType === 'mouse') projectFocus.set(slug);
+    },
+    onFocus: () => projectFocus.set(slug),
+    onBlur: (event: FocusEvent<HTMLElement>) => {
+      if (!event.currentTarget.contains(event.relatedTarget as Node | null)) projectFocus.set(null);
+    },
+  };
+}
+
+function unfocus(event: PointerEvent<HTMLElement>) {
+  if (event.pointerType === 'mouse') projectFocus.set(null);
+}
+
 function WorkCard({
   project,
   index,
@@ -170,7 +181,11 @@ function WorkCard({
   return (
     <article
       onPointerMove={tilt}
-      onPointerLeave={reset}
+      onPointerLeave={(event) => {
+        reset();
+        unfocus(event);
+      }}
+      {...focusHandlers(project.slug)}
       className="work-card group"
       style={{ '--card-accent': theme.accent } as CSSProperties}
     >
@@ -254,7 +269,7 @@ function WorkRow({
   onOpen: (event: MouseEvent<HTMLAnchorElement>, slug: string) => void;
 }) {
   return (
-    <article className="work-row group">
+    <article className="work-row group" onPointerLeave={unfocus} {...focusHandlers(project.slug)}>
       <Link href={`/work/${project.slug}`} onClick={(event) => onOpen(event, project.slug)} tabIndex={-1} aria-hidden="true" className="work-row-thumb">
         <ProjectCover project={project} />
       </Link>

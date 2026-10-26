@@ -6,6 +6,7 @@ import { alsoUsed, stackGroups } from '@/data/stack';
 import { ArrowUpRight, Download, GitHub, LinkedIn } from '../icons';
 import { ExternalLink } from '../ui';
 import { DevUniverse } from './dev-universe';
+import { SystemArchitecture } from './system-architecture';
 import { SystemOrbit } from './system-orbit';
 import { WorkGrid } from './work-grid';
 
@@ -18,12 +19,15 @@ function SectionIntro({
   id,
   title,
   aside,
+  art,
 }: {
   index: string;
   label: string;
   id: string;
   title: React.ReactNode;
   aside?: React.ReactNode;
+  /** Decorative visual beside the heading (below it on smaller screens). */
+  art?: React.ReactNode;
 }) {
   return (
     <header className="reveal relative mb-12 md:mb-20">
@@ -33,9 +37,12 @@ function SectionIntro({
         </span>
         {aside ? <span>{aside}</span> : null}
       </div>
-      <h2 id={id} className="mt-8 max-w-5xl text-[clamp(2.25rem,5.6vw,5.25rem)] leading-[0.95] font-semibold tracking-[-0.045em] text-balance">
-        {title}
-      </h2>
+      <div className={art ? 'section-intro-art' : undefined}>
+        <h2 id={id} className="mt-8 max-w-5xl text-[clamp(2.25rem,5.6vw,5.25rem)] leading-[0.95] font-semibold tracking-[-0.045em] text-balance">
+          {title}
+        </h2>
+        {art}
+      </div>
     </header>
   );
 }
@@ -81,6 +88,11 @@ export function WorkSection() {
           <>
             Products and systems, <span className="text-muted">built end to end.</span>
           </>
+        }
+        art={
+          <div aria-hidden="true" className="work-system">
+            <SystemArchitecture projects={projects} />
+          </div>
         }
       />
       <WorkGrid projects={projects} />
@@ -232,14 +244,11 @@ export function AboutSection() {
       />
 
       <div className="grid gap-14 lg:grid-cols-[minmax(0,4fr)_minmax(0,8fr)] lg:gap-20">
-        {/* Left: the stack in orbit, and quick facts. Sticky on large screens, below the fixed HUD. */}
+        {/* Left: the living code lattice, and quick facts. Sticky on large screens, below the fixed HUD. */}
         <aside className="self-start lg:sticky lg:top-28">
           <figure data-reveal="rise">
             <div className="about-universe">
               <DevUniverse />
-              <span aria-hidden="true" className="about-universe-tag">
-                fig. 01 — the stack, in orbit
-              </span>
             </div>
             <figcaption className="mt-4 flex items-baseline justify-between gap-4">
               <span className="text-base font-semibold tracking-[-0.01em]">{site.name}</span>

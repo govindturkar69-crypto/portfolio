@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { theme } from '@/lib/theme';
-import { clamp, project, rotX, rotZ, useScene, view, type Camera, type Frame, type Vec3 } from './scene';
+import { useRef } from 'react';
+import { clamp, palette, project, rgba, rotX, rotZ, useScene, view, type Camera, type Frame, type Vec3 } from './scene';
 
 /*
  * "In short": system orbit. A glass core (the application) breathes inside three thin orbits;
@@ -44,17 +43,11 @@ const ringPoint = (ring: Ring, angle: number): Vec3 => rotX(rotZ([ring.r * Math.
 
 const smooth = (x: number) => x * x * (3 - 2 * x);
 
-/** Colours per theme: additive light on Ink, ink-on-paper strokes on Paper. */
-const PALETTES = {
-  dark: { line: '150,180,255', glow: '90,130,255', dot: '205,222,255', label: '220,230,255', blend: 'lighter' as GlobalCompositeOperation },
-  light: { line: '42,79,214', glow: '42,79,214', dot: '29,58,166', label: '20,19,17', blend: 'source-over' as GlobalCompositeOperation },
-};
-
 function draw(f: Frame) {
   const { ctx, w, h, t, enter } = f;
-  const dark = document.documentElement.classList.contains('dark');
-  const pal = dark ? PALETTES.dark : PALETTES.light;
-  const ink = (rgb: string, a: number) => `rgba(${rgb},${clamp(a, 0, 1).toFixed(3)})`;
+  const pal = palette();
+  const dark = pal.dark;
+  const ink = rgba;
 
   const cam: Camera = {
     yaw: 0.3 * Math.sin(t * 0.06) + f.px * 0.22,
@@ -313,11 +306,6 @@ function draw(f: Frame) {
 
 export function SystemOrbit() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const invalidate = useScene(canvasRef, draw);
-  // A still frame (reduced motion) must follow theme switches too.
-  useEffect(() => {
-    const off = theme.subscribe(() => invalidate.current());
-    return () => void off();
-  }, [invalidate]);
+  useScene(canvasRef, draw);
   return <canvas ref={canvasRef} aria-hidden="true" className="absolute inset-0 block h-full w-full" />;
 }

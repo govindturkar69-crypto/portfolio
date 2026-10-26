@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
-import { CommandPalette } from '@/components/command-palette';
 import { CustomCursor } from '@/components/portfolio/custom-cursor';
 import { ScrollReveal } from '@/components/portfolio/scroll-reveal';
 import { PortfolioHUD } from '@/components/portfolio/portfolio-hud';
@@ -101,7 +100,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           {children}
         </main>
         <SiteFooter />
-        <CommandPalette />
         <div aria-hidden="true" className="film-grain" />
         <CustomCursor />
         <ScrollReveal />

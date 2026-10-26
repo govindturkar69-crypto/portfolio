@@ -19,13 +19,6 @@ export const site = {
     'Software engineer building full-stack products on React, TypeScript and typed APIs — and the systems underneath them, including a relational database engine written in Rust.',
 } as const;
 
-export const navigation = [
-  { label: 'Work', href: '/#work' },
-  { label: 'Capabilities', href: '/#capabilities' },
-  { label: 'About', href: '/#about' },
-  { label: 'Contact', href: '/#contact' },
-] as const;
-
 export type TimelineEntry = {
   kind: 'work' | 'education';
   period: string;

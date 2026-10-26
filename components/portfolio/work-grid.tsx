@@ -200,6 +200,15 @@ function WorkCard({
         <span className="sr-only">Stack: </span>
         {project.stack.slice(0, 5).join(' · ')}
       </p>
+      <p className="work-arch mt-3">
+        <span className="work-arch-label">Architecture</span>
+        {project.architecture.layers.slice(0, 4).map((layer, i) => (
+          <span key={layer.name} className="work-arch-step">
+            {i > 0 ? <span aria-hidden="true"> → </span> : null}
+            {layer.name}
+          </span>
+        ))}
+      </p>
       {soloProjects.has(project.slug) ? (
         <p className="mt-1.5 font-mono text-xs text-subtle">
           <span className="text-fg/80">Solo project</span> · designed and built end to end

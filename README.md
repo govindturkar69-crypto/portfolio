@@ -23,7 +23,7 @@ Each project has a case study at `/work/<slug>`.
 
 ```
 app/
-  layout.tsx              Metadata, JSON-LD, theme + font scripts, HUD, footer, palette, cursor
+  layout.tsx              Metadata, JSON-LD, theme + font scripts, HUD, footer, cursor
   page.tsx                Home: hero, intro, work, capabilities, about, warp
   work/[slug]/page.tsx    Statically generated case study per project
   globals.css             Design tokens (paper/ink), and all component styles
@@ -39,7 +39,6 @@ components/
     site-footer.tsx         Contact section and footer (every page)
     scroll-reveal.tsx       One IntersectionObserver that reveals elements once
     custom-cursor.tsx       Directional cursor with magnetic snapping (fine pointers only)
-  command-palette.tsx     ⌘K / Ctrl+K / "/" palette on a native <dialog>
   architecture-diagram.tsx copy-email-button.tsx icons.tsx ui.tsx
 data/                     projects.ts, site.ts, stack.ts — all content lives here
 lib/                      portfolio-config.ts (copy + motion settings), theme.ts, sound.ts, clipboard.ts

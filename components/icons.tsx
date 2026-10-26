@@ -67,41 +67,6 @@ export function Check(props: IconProps) {
   );
 }
 
-export function Mail(props: IconProps) {
-  return (
-    <svg {...base(props)}>
-      <rect x="3" y="5" width="18" height="14" rx="2" />
-      <path d="m4 7 8 6 8-6" />
-    </svg>
-  );
-}
-
-export function Search(props: IconProps) {
-  return (
-    <svg {...base(props)}>
-      <circle cx="11" cy="11" r="6.5" />
-      <path d="m20 20-4.2-4.2" />
-    </svg>
-  );
-}
-
-export function Hash(props: IconProps) {
-  return (
-    <svg {...base(props)}>
-      <path d="M5 9h14M5 15h14M10 4 8 20M16 4l-2 16" />
-    </svg>
-  );
-}
-
-export function Layers(props: IconProps) {
-  return (
-    <svg {...base(props)}>
-      <path d="m12 3 9 5-9 5-9-5 9-5Z" />
-      <path d="m3 13 9 5 9-5" />
-    </svg>
-  );
-}
-
 export function GitHub({ size = 16, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden focusable={false} {...props}>

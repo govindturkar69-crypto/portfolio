@@ -2,26 +2,22 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect, useState, useSyncExternalStore } from 'react';
+import { site } from '@/data/site';
 import { portfolioConfig } from '@/lib/portfolio-config';
 import { sound } from '@/lib/sound';
 import { theme } from '@/lib/theme';
-import { openCommandPalette } from '../command-palette';
 
 /**
  * Top-right text navigation in bracketed mono groups: section links, then the quiet
- * controls (theme, sound, search). The active link follows the section in view via an
+ * controls (theme, sound) and a résumé download. The active link follows the section in view via an
  * IntersectionObserver band across the middle of the viewport (no scroll listener).
  */
-const isApple = () => /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent);
-const noSubscribe = () => () => {};
-
 export function HUDNav() {
   const pathname = usePathname();
   const [active, setActive] = useState<string | null>(null);
   const soundOn = useSyncExternalStore(sound.subscribe, sound.isEnabled, () => false);
   // Server snapshot is light; the head script may already have applied dark before hydration.
   const dark = useSyncExternalStore(theme.subscribe, () => theme.get() === 'dark', () => false);
-  const apple = useSyncExternalStore(noSubscribe, isApple, () => true);
 
   useEffect(() => {
     if (pathname !== '/') return;
@@ -103,20 +99,10 @@ export function HUDNav() {
           <span aria-hidden="true" className="hud-sep">
             /
           </span>
-          <button
-            type="button"
-            data-magnetic
-            className="hud-nav-link"
-            aria-haspopup="dialog"
-            data-palette-trigger
-            onClick={() => {
-              sound.play('click');
-              openCommandPalette();
-            }}
-          >
-            {apple ? '⌘K' : 'Ctrl K'}
-            <span className="sr-only">, search and quick navigation</span>
-          </button>
+          <a href={site.resume} download data-magnetic className="hud-nav-link">
+            Résumé
+            <span className="sr-only"> (PDF download)</span>
+          </a>
         </li>
       </ul>
     </nav>

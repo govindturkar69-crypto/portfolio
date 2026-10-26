@@ -1,7 +1,7 @@
 import { site } from '@/data/site';
 import { portfolioConfig } from '@/lib/portfolio-config';
 import { CopyEmailButton } from '../copy-email-button';
-import { ArrowRight, Download, GitHub } from '../icons';
+import { ArrowRight, Download, GitHub, LinkedIn } from '../icons';
 import { ExternalLink, buttonStyles } from '../ui';
 import { InflatedWord } from './inflated-word';
 import { container } from './home-sections';
@@ -51,10 +51,27 @@ export function Hero() {
                 View selected work
                 <ArrowRight size={16} className="transition-transform duration-200 group-hover:translate-x-1" />
               </a>
-              <ExternalLink href={site.github} data-magnetic className={buttonStyles.tertiary}>
-                <GitHub size={16} />
-                GitHub
-              </ExternalLink>
+            </div>
+            {/* Availability + direct profiles: everything a recruiter needs without scrolling. */}
+            <div className="hero-meta mt-6">
+              <span className="hero-status">
+                <span aria-hidden="true" className="size-1.5 animate-pulse-dot rounded-full bg-live" />
+                {site.availability}
+              </span>
+              <nav aria-label="Profiles and contact" className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                <ExternalLink href={site.github} data-magnetic className="hero-link">
+                  <GitHub size={14} />
+                  GitHub
+                </ExternalLink>
+                <ExternalLink href={site.linkedin} data-magnetic className="hero-link">
+                  <LinkedIn size={14} />
+                  LinkedIn
+                </ExternalLink>
+                <a href="#contact" data-magnetic className="hero-link">
+                  Contact
+                  <ArrowRight size={14} />
+                </a>
+              </nav>
             </div>
           </div>
           <p className="font-heading text-[clamp(1.5rem,3.2vw,2.75rem)] leading-[0.95] font-bold tracking-[-0.02em] uppercase md:text-right">

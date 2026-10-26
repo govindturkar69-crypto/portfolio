@@ -31,12 +31,18 @@ export const theme = {
       theme.apply(next);
     };
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const doc = document as Document & { startViewTransition?: (update: () => void) => unknown };
+    type Transition = { ready: Promise<void>; finished: Promise<void>; updateCallbackDone: Promise<void> };
+    const doc = document as Document & { startViewTransition?: (update: () => void) => Transition };
     if (reduced) {
       apply();
     } else if (doc.startViewTransition) {
       // A whole-page crossfade: one snapshot of each theme, no per-element repaint storm.
-      doc.startViewTransition(apply);
+      const transition = doc.startViewTransition(apply);
+      // A skipped or timed-out crossfade is harmless (the theme still applies): keep it quiet.
+      const ignore = () => {};
+      transition.ready.catch(ignore);
+      transition.finished.catch(ignore);
+      transition.updateCallbackDone.catch(ignore);
       // The transition's update waits for a rendered frame (never comes in a hidden or
       // throttled tab). Never let the switch depend on that: apply directly if it stalls.
       window.setTimeout(apply, 300);

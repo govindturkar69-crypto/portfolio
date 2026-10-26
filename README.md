@@ -6,18 +6,29 @@ Personal site for **Govind Turkar**, software engineer. Full-stack products, dow
 
 Hosted on **Vercel**: every push to `main` deploys automatically.
 
-## Featured work
+## What's on the site
 
-| Project | What it is |
-| --- | --- |
-| [ScratchDB](https://github.com/govindturkar69-crypto/database-from-scratch) | Relational database engine in safe Rust: buffer pool, B+Trees, SQL planner, strict 2PL, WAL + ARIES recovery |
-| [Redis in Java](https://github.com/govindturkar69-crypto/build-your-own-redis-in-java) | Redis-compatible server in plain Java 21: RESP, NIO, lock striping, skip-list sorted sets, AOF + snapshots |
-| [VeriDoc](https://github.com/govindturkar69-crypto/VeriDoc) | Citation-grounded RAG with a relevance gate and honest refusal |
-| [Private Search Engine](https://github.com/govindturkar69-crypto/Private-Search-Engine) | Self-hosted search: SSRF-hardened crawler, SQLite inverted index, BM25, React UI |
-| [NexusCode](https://github.com/govindturkar69-crypto/NexusCode) | Planning board, browser IDE, live collaboration and AI assistance |
-| [RealtyIQ](https://github.com/govindturkar69-crypto/RealtyIQ) | Real-estate price prediction with confidence ranges and SHAP explanations |
+- **Hero** — a WebGL glass word, résumé download, copy-email button, and an availability indicator with direct
+  GitHub, LinkedIn and Contact links.
+- **Work** — featured project cards with category, stack, an architecture line (the project's top layers) and
+  Case study / Source / Live demo links; the rest as compact rows. Each project opens in an overlay
+  (`#project/<slug>` deep links) and has a full case study at `/work/<slug>`.
+- **Capabilities, About, Contact** — principles, milestones, timeline, and a contact footer on every page.
+- **Navigation** — a fixed HUD with Work / About / Contact links, theme and sound toggles, and a résumé download.
+- **Floating stickers** — technology stickers fall in from above, then drift within bounded areas across the page.
 
-Each project has a case study at `/work/<slug>`.
+## Projects
+
+| Project | What it is | Live |
+| --- | --- | --- |
+| [ScratchDB](https://github.com/govindturkar69-crypto/database-from-scratch) | Relational database engine in safe Rust: buffer pool, B+Trees, SQL planner, strict 2PL, WAL + ARIES recovery | — |
+| [Redis in Java](https://github.com/govindturkar69-crypto/build-your-own-redis-in-java) | Redis-compatible server in plain Java 21: RESP, NIO, lock striping, skip-list sorted sets, AOF + snapshots | — |
+| [VeriDoc](https://github.com/govindturkar69-crypto/VeriDoc) | Citation-grounded RAG with a relevance gate and honest refusal | [App](https://veridoc-9td5zj9kteg5cly2vnaz6b.streamlit.app/) |
+| [Private Search Engine](https://github.com/govindturkar69-crypto/Private-Search-Engine) | Self-hosted search: SSRF-hardened crawler, SQLite inverted index, BM25, React UI | — |
+| [NexusCode](https://github.com/govindturkar69-crypto/NexusCode) | Planning board, browser IDE, live collaboration and AI assistance | [App](https://nexus-code-chi.vercel.app) |
+| [RealtyIQ](https://github.com/govindturkar69-crypto/RealtyIQ) | Real-estate price prediction with confidence ranges and SHAP explanations | [App](https://realty-iq-puce.vercel.app) |
+| [Aurora Weather](https://github.com/govindturkar69-crypto/aurora-weather) | Typed weather API with automatic provider fallback and Redis cache-aside | [App](https://aurora-weather-six.vercel.app) |
+| [TalentAI](https://github.com/govindturkar69-crypto/TalentAI-Recruitment-Platform) | Resume parsing, skill extraction and weighted candidate ranking for recruiters | — |
 
 ## Structure
 
@@ -25,13 +36,13 @@ Each project has a case study at `/work/<slug>`.
 app/
   layout.tsx              Metadata, JSON-LD, theme + font scripts, HUD, footer, cursor
   page.tsx                Home: hero, intro, work, capabilities, about, warp
-  work/[slug]/page.tsx    Statically generated case study per project
+  work/[slug]/page.tsx    Statically generated case study per project (with JSON-LD)
   globals.css             Design tokens (paper/ink), and all component styles
   sitemap.ts robots.ts not-found.tsx
 components/
   portfolio/
-    hero.tsx                Editorial hero; inflated-word.tsx renders the WebGL glass word
-    hero-stickers.tsx       Falling + floating stickers (hero band and section stickers); art in sticker-art.tsx
+    hero.tsx                Editorial hero, availability + profile links; inflated-word.tsx renders the WebGL word
+    sticker-field.tsx       Page-wide floating sticker layer; art in sticker-art.tsx
     home-sections.tsx       Intro, Work, Capabilities and About sections
     work-grid.tsx           Featured cards, compact rows and the project overlay; covers in project-cover.tsx
     warp-tunnel.tsx         Scroll-linked starfield with the three statements
@@ -42,15 +53,17 @@ components/
   architecture-diagram.tsx copy-email-button.tsx icons.tsx ui.tsx
 data/                     projects.ts, site.ts, stack.ts — all content lives here
 lib/                      portfolio-config.ts (copy + motion settings), theme.ts, sound.ts, clipboard.ts
+public/                   Résumé PDF, project screenshots, OG image, favicon
 ```
 
 - **Content is data.** Edit `data/*.ts` and `lib/portfolio-config.ts`; components never hard-code copy.
 - **Themes.** Paper (light) and Ink (dark) share one layout; colours are CSS tokens in `app/globals.css`. A saved
   choice wins, otherwise the system preference; it is applied in `<head>` before first paint.
-- **Stickers.** Pure CSS, four nested layers so no animations fight: fall, horizontal sway, vertical float, hover.
-  Tune them in `portfolioConfig.stickers`. Reduced motion shows them settled and still.
-- **Accessibility.** Semantic landmarks, skip link, visible focus, WCAG AA contrast on every token (ratios in
-  `globals.css`), label-in-name controls, and `prefers-reduced-motion` respected everywhere.
+- **Stickers.** A fixed layer behind the content: each sticker falls in, then wanders on a seeded (deterministic)
+  path, eases away from the cursor and fades while it passes behind text. Tune counts and timing in
+  `portfolioConfig.stickers.field`. Phones get fewer, smaller stickers; reduced motion shows them still.
+- **Accessibility.** Semantic landmarks, skip link, visible focus, WCAG AA contrast on every token, label-in-name
+  controls, and `prefers-reduced-motion` respected everywhere.
 
 ### Project screenshots
 
@@ -65,7 +78,7 @@ Only add live links that work, and set `liveNote` if a host may need waking.
 
 ## Stack
 
-Next.js 16 App Router · React 19 · TypeScript · Tailwind CSS v4 · GSAP · Vercel
+Next.js 16 App Router · React 19 · TypeScript · Tailwind CSS v4 · GSAP · WebGL · Vercel
 
 ## Development
 

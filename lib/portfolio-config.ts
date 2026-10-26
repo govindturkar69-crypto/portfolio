@@ -38,14 +38,11 @@ export const portfolioConfig = {
     stars: 520,
   },
   stickers: {
-    /** Entrance: first sticker's delay, extra delay per sticker, base drop length (seconds). */
-    fall: { delay: 0.25, stagger: 0.13, duration: 1.15 },
-    /** Horizontal sway after landing: travel range (px; each sticker gets 8–18) and base cycle (s). */
-    sway: { min: 8, max: 18, duration: 7.2 },
-    /** Vertical float after landing: lift (px) and base cycle (s). Cycles differ per sticker. */
-    float: { lift: 9, duration: 4.8 },
-    /** How many stickers phones show (the rest hide below 768px). */
-    visible: { mobile: 4 },
+    /**
+     * Floating sticker layer: how many stickers (fewer on phones), when the first one
+     * drops in and the gap between drops (seconds), and how far the cursor's push reaches (px).
+     */
+    field: { desktop: 6, mobile: 4, delay: 0.3, stagger: 0.18, cursorRadius: 160 },
   },
   dock: [
     { id: 'work', label: 'Work', href: '/#work' },

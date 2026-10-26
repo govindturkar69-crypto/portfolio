@@ -3,17 +3,16 @@ import type { ReactNode } from 'react';
 /*
  * Original sticker artwork: self-contained SVG, no external assets. Each sticker has a
  * white die-cut border and a soft drop shadow so it reads as a physical sticker.
- * `rest` is [x as a fraction of the hero width, y as a fraction of the sticker band].
  */
 export type StickerKind = 'star' | 'badge' | 'flame' | 'heart' | 'seal' | 'braces';
 
-export const STICKERS: { kind: StickerKind; size: number; rest: [number, number]; tilt: number }[] = [
-  { kind: 'star', size: 112, rest: [0.12, 0.5], tilt: -12 },
-  { kind: 'badge', size: 128, rest: [0.3, 0.54], tilt: 8 },
-  { kind: 'flame', size: 96, rest: [0.52, 0.5], tilt: -6 },
-  { kind: 'heart', size: 104, rest: [0.68, 0.55], tilt: 10 },
-  { kind: 'seal', size: 108, rest: [0.84, 0.48], tilt: -9 },
-  { kind: 'braces', size: 120, rest: [0.95, 0.56], tilt: 14 },
+export const STICKERS: { kind: StickerKind; size: number; tilt: number }[] = [
+  { kind: 'star', size: 112, tilt: -12 },
+  { kind: 'badge', size: 128, tilt: 8 },
+  { kind: 'flame', size: 96, tilt: -6 },
+  { kind: 'heart', size: 104, tilt: 10 },
+  { kind: 'seal', size: 108, tilt: -9 },
+  { kind: 'braces', size: 120, tilt: 14 },
 ];
 
 const DIE_CUT = { fill: 'none', stroke: '#fff', strokeWidth: 10, strokeLinejoin: 'round' as const };

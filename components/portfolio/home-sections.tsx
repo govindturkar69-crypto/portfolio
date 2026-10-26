@@ -6,8 +6,6 @@ import { experience, site, type TimelineEntry } from '@/data/site';
 import { alsoUsed, stackGroups } from '@/data/stack';
 import { ArrowUpRight, Download, GitHub, LinkedIn } from '../icons';
 import { ExternalLink } from '../ui';
-import { SectionSticker } from './hero-stickers';
-import type { StickerKind } from './sticker-art';
 import { WorkGrid } from './work-grid';
 
 export const container = 'mx-auto w-full max-w-[88rem] px-4 sm:px-6 lg:px-10';
@@ -19,19 +17,15 @@ function SectionIntro({
   id,
   title,
   aside,
-  sticker,
 }: {
   index: string;
   label: string;
   id: string;
   title: React.ReactNode;
   aside?: React.ReactNode;
-  /** Optional decorative sticker in the open space to the right of the heading (wide screens). */
-  sticker?: { kind: StickerKind; seed: number };
 }) {
   return (
     <header className="reveal relative mb-12 md:mb-20">
-      {sticker ? <SectionSticker kind={sticker.kind} seed={sticker.seed} className="top-16 right-[3%]" /> : null}
       <div className="flex items-center justify-between gap-4 border-b border-line pb-4 font-mono text-xs tracking-[0.08em] text-subtle uppercase">
         <span>
           ({index}) — {label}
@@ -77,7 +71,6 @@ export function WorkSection() {
         index="01"
         label="Selected work"
         id="work-title"
-        sticker={{ kind: 'braces', seed: 6 }}
         aside={`${String(projects.length).padStart(2, '0')} projects`}
         title={
           <>
@@ -98,7 +91,6 @@ export function CapabilitiesSection() {
           index="02"
           label="Capabilities"
           id="capabilities-title"
-          sticker={{ kind: 'flame', seed: 7 }}
           title={
             <>
               Every tool listed here <span className="text-muted">ships in a project you can open.</span>
@@ -227,7 +219,6 @@ export function AboutSection() {
         index="03"
         label="About"
         id="about-title"
-        sticker={{ kind: 'star', seed: 8 }}
         title={
           <>
             I like knowing how the whole thing works — <span className="text-muted">from the button to the bytes on disk.</span>

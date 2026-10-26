@@ -155,7 +155,7 @@
    * Per-element delay: --d (ms). Word stagger: --i.
    */
   /* Hidden states: applied instantly (no transition), so nothing visibly fades out first. */
-  html[data-reveal-ready] :is(.reveal, [data-reveal]):not([data-reveal='line'], [data-reveal='words'], [data-reveal='drop'], [data-revealed]) {
+  html[data-reveal-ready] :is(.reveal, [data-reveal]):not([data-reveal='line'], [data-reveal='words'], [data-revealed]) {
     opacity: 0;
     transform: translateY(16px);
   }
@@ -178,7 +178,7 @@
   }
 
   /* Revealed: the only state that transitions. */
-  html[data-reveal-ready] :is(.reveal, [data-reveal])[data-revealed]:not([data-reveal='line'], [data-reveal='words'], [data-reveal='drop']) {
+  html[data-reveal-ready] :is(.reveal, [data-reveal])[data-revealed]:not([data-reveal='line'], [data-reveal='words']) {
     transition:
       opacity 0.7s var(--ease-out-snappy) var(--d, 0ms),
       transform 0.8s var(--ease-out-snappy) var(--d, 0ms);
@@ -568,185 +568,70 @@
     opacity: 0;
   }
 
-  /* Hero stickers: the field ignores the pointer; each sticker takes hover only. */
   /*
-   * The stickers live in their own band along the bottom of the hero. The hero reserves
-   * the same height as bottom padding, so no sticker (with its sway, float and hover
-   * envelope) can reach the heading, copy or buttons at any width.
+   * Floating stickers (StickerField): one fixed, full-viewport layer behind the page
+   * content. It never takes the pointer, so it cannot block clicks, selection or scroll.
+   * Hidden until JS takes over (it is purely decorative); JS writes each transform.
    */
-  :root {
-    --sticker-band: 136px;
-  }
-
-  @media (min-width: 768px) {
-    :root {
-      --sticker-band: 196px;
-    }
-  }
-
-  .sticker-field {
-    position: absolute;
-    inset: auto 0 0;
-    height: var(--sticker-band);
-    z-index: 5;
+  .sticker-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
     pointer-events: none;
-    /* Clip sideways only: stickers can drop in from above without being cut off,
-       but nothing may widen the page. */
-    overflow-x: clip;
-    overflow-y: visible;
-    --sticker-scale: 0.7;
+    --sticker-scale: 0.62;
+  }
+
+  .sticker-layer:not([data-live]) {
+    display: none;
   }
 
   @media (min-width: 768px) {
-    .sticker-field {
-      --sticker-scale: 1;
+    .sticker-layer {
+      --sticker-scale: 0.85;
     }
   }
 
-  .sticker {
+  .sticker-drift {
     position: absolute;
-    pointer-events: auto;
+    top: 0;
+    left: 0;
+    will-change: transform;
     user-select: none;
     -webkit-user-select: none;
   }
 
-  .sticker svg {
+  .sticker-drift svg {
     display: block;
     width: 100%;
     height: auto;
   }
 
-  /* Phones travel less: every sway and float distance is multiplied by this. */
-  .sticker-field {
-    --motion-scale: 0.6;
-  }
-
-  @media (min-width: 768px) {
-    .sticker-field {
-      --motion-scale: 1;
-    }
-  }
-
-  .sticker-fall {
-    animation: sticker-fall var(--fall-duration, 1.15s) linear var(--fall-delay, 0.25s) both;
-  }
-
-  .sticker-sway {
-    animation: sticker-sway var(--sway-duration, 7s) linear var(--loop-delay, 1.5s) infinite;
-  }
-
-  .sticker-float {
-    animation: sticker-float var(--float-duration, 5s) linear var(--loop-delay, 1.5s) infinite;
-  }
-
-  .sticker-hover {
-    /* Slight overshoot on the way in and out: a gentle spring. */
-    transition: transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  @media (hover: hover) {
-    .sticker:hover :is(.sticker-sway, .sticker-float) {
-      animation-play-state: paused;
-    }
-
-    .sticker:hover .sticker-hover {
-      transform: translateY(-6px) scale(1.08) rotate(var(--hover-tilt, 7deg));
-    }
-  }
-
-  /*
-   * Section stickers (SectionSticker): the wrapper is placed in a section's open space;
-   * the sticker inside is in normal flow there. They fall from ~¾ of a screen above, and
-   * stay paused (out of view, above) until ScrollReveal marks their section as seen.
-   */
-  .section-sticker {
-    z-index: 4;
-    --fall-from: -75vh;
-  }
-
-  .section-sticker > .sticker {
+  /* Page content always paints above the sticker layer. */
+  #main,
+  .site-footer {
     position: relative;
+    z-index: 1;
   }
 
-  html[data-reveal-ready] .section-sticker:not([data-revealed]) :is(.sticker-fall, .sticker-sway, .sticker-float) {
-    animation-play-state: paused;
+  /* About portrait: a slow idle breath (rise, settle, a hint of turn). */
+  .about-portrait img {
+    animation: portrait-idle 7s ease-in-out infinite;
+    transform-origin: 50% 100%;
   }
 
-  /*
-   * Gravity drop: starts a full screen height (plus a margin) above the band, i.e. above the top of the screen,
-   * accelerates in, then two shrinking bounces. Each segment carries its own easing so it
-   * reads as falling, not sliding.
-   */
-  @keyframes sticker-fall {
-    0% {
-      transform: translateY(var(--fall-from, calc(-100svh - 120px))) rotate(var(--fall-spin, -8deg));
-      animation-timing-function: cubic-bezier(0.55, 0, 0.9, 0.45);
-    }
-    68% {
-      transform: translateY(0) rotate(0deg);
-      animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1);
-    }
-    82% {
-      transform: translateY(calc(var(--bounce, 12px) * -1)) rotate(calc(var(--fall-spin, -8deg) * -0.15));
-      animation-timing-function: cubic-bezier(0.6, 0, 0.9, 0.5);
-    }
-    92% {
-      transform: translateY(0) rotate(0deg);
-      animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1);
-    }
-    96% {
-      transform: translateY(calc(var(--bounce, 12px) * -0.25)) rotate(0deg);
-      animation-timing-function: cubic-bezier(0.6, 0, 0.9, 0.5);
-    }
+  @keyframes portrait-idle {
+    0%,
     100% {
       transform: translateY(0) rotate(0deg);
     }
-  }
-
-  /*
-   * Sine-like loops that start and end at 0 with matching speed, so cycles join with no
-   * snap: out (ease-out), across (ease-in-out), back (ease-in).
-   */
-  @keyframes sticker-sway {
-    0% {
-      transform: translateX(0) rotate(0deg);
-      animation-timing-function: cubic-bezier(0.61, 1, 0.88, 1);
-    }
-    25% {
-      transform: translateX(calc(var(--sway-x, 12px) * var(--motion-scale, 1))) rotate(var(--sway-rot, 1deg));
-      animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
-    }
-    75% {
-      transform: translateX(calc(var(--sway-x, 12px) * var(--motion-scale, 1) * -1)) rotate(calc(var(--sway-rot, 1deg) * -1));
-      animation-timing-function: cubic-bezier(0.12, 0, 0.39, 0);
-    }
-    100% {
-      transform: translateX(0) rotate(0deg);
-    }
-  }
-
-  @keyframes sticker-float {
-    0% {
-      transform: translateY(0);
-      animation-timing-function: cubic-bezier(0.61, 1, 0.88, 1);
-    }
-    25% {
-      transform: translateY(calc(var(--float-lift, 9px) * var(--motion-scale, 1) * -1));
-      animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
-    }
-    75% {
-      transform: translateY(calc(var(--float-lift, 9px) * var(--motion-scale, 1) * 0.6));
-      animation-timing-function: cubic-bezier(0.12, 0, 0.39, 0);
-    }
-    100% {
-      transform: translateY(0);
+    50% {
+      transform: translateY(-5px) rotate(-0.6deg);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .sticker-fall,
-    .sticker-sway,
-    .sticker-float {
+    .about-portrait img {
       animation: none;
     }
   }

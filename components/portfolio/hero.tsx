@@ -1,11 +1,10 @@
 import { site } from '@/data/site';
 import { portfolioConfig } from '@/lib/portfolio-config';
 import { CopyEmailButton } from '../copy-email-button';
-import { ArrowRight, Download } from '../icons';
-import { buttonStyles } from '../ui';
+import { ArrowRight, Download, GitHub } from '../icons';
+import { ExternalLink, buttonStyles } from '../ui';
 import { InflatedWord } from './inflated-word';
 import { container } from './home-sections';
-import { HeroStickers } from './hero-stickers';
 
 /**
  * Editorial hero. Server-rendered: every word of copy is real text in the HTML; the
@@ -18,7 +17,7 @@ export function Hero() {
     <section id="top" aria-labelledby="hero-title" className="hero-editorial relative isolate">
       {/* Ambient light. Extends below the hero and fades out, so there is no edge where the section ends. */}
       <div aria-hidden="true" className="hero-glow" />
-      <div className={`${container} relative flex min-h-[100svh] flex-col justify-center pt-28 pb-[calc(var(--sticker-band)+1rem)] md:pt-24`}>
+      <div className={`${container} relative flex min-h-[100svh] flex-col justify-center pt-28 pb-20 md:pt-24 md:pb-24`}>
         <p className="enter font-mono text-xs tracking-[0.18em] text-accent uppercase" style={{ '--i': 0 } as React.CSSProperties}>
           {kicker}
         </p>
@@ -52,6 +51,10 @@ export function Hero() {
                 View selected work
                 <ArrowRight size={16} className="transition-transform duration-200 group-hover:translate-x-1" />
               </a>
+              <ExternalLink href={site.github} data-magnetic className={buttonStyles.tertiary}>
+                <GitHub size={16} />
+                GitHub
+              </ExternalLink>
             </div>
           </div>
           <p className="font-heading text-[clamp(1.5rem,3.2vw,2.75rem)] leading-[0.95] font-bold tracking-[-0.02em] uppercase md:text-right">
@@ -65,7 +68,6 @@ export function Hero() {
         </div>
       </div>
 
-      <HeroStickers />
     </section>
   );
 }

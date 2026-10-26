@@ -6,6 +6,7 @@ import { alsoUsed, stackGroups } from '@/data/stack';
 import { ArrowUpRight, Download, GitHub, LinkedIn } from '../icons';
 import { ExternalLink } from '../ui';
 import { DevUniverse } from './dev-universe';
+import { SystemOrbit } from './system-orbit';
 import { WorkGrid } from './work-grid';
 
 export const container = 'mx-auto w-full max-w-[88rem] px-4 sm:px-6 lg:px-10';
@@ -45,9 +46,13 @@ export function IntroSection() {
     'text-fg underline decoration-line-strong decoration-1 underline-offset-[0.18em] transition-colors duration-200 hover:decoration-accent';
   return (
     <section aria-label="Introduction" className={`${container} py-24 md:py-40`}>
-      <div className="grid gap-8 md:grid-cols-[minmax(0,3fr)_minmax(0,9fr)]">
-        <p className="reveal font-mono text-xs tracking-[0.08em] text-subtle uppercase md:pt-3">(00) — In short</p>
-        <p className="reveal max-w-[22ch] text-[clamp(1.75rem,3.6vw,3.5rem)] leading-[1.08] font-medium tracking-[-0.035em] text-pretty text-muted md:max-w-none">
+      <div className="intro-grid">
+        <p className="reveal font-mono text-xs tracking-[0.08em] text-subtle uppercase md:pt-3 [grid-area:label]">(00) — In short</p>
+        {/* System orbit: fills the column under the label (beside the text), below the text on phones. */}
+        <div aria-hidden="true" className="intro-orbit" data-reveal="rise">
+          <SystemOrbit />
+        </div>
+        <p className="reveal [grid-area:text] max-w-[22ch] text-[clamp(1.75rem,3.6vw,3.5rem)] leading-[1.08] font-medium tracking-[-0.035em] text-pretty text-muted md:max-w-none">
           <span className="text-fg">I build products the whole way down</span> — interfaces people enjoy, typed APIs that hold up,
           and the storage engine underneath when I want to understand it properly. Lately that means{' '}
           <Link href="/work/scratchdb" className={link}>

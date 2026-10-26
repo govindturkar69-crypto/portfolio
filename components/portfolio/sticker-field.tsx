@@ -41,11 +41,11 @@ function seeded(seed: number) {
 }
 
 /**
- * Text (and the see-through glass word) that stickers may drift behind: they fade there, so
- * it stays readable. Nothing is avoided outright: that traps stickers in the gaps between
- * blocks. Opaque content (project covers, the 3D scenes, buttons) simply hides them, as depth.
+ * Text (and the see-through glass word and system orbit) that stickers may drift behind: they
+ * fade there, so it stays readable. Nothing is avoided outright: that traps stickers in the gaps
+ * between blocks. Opaque content (project covers, the 3D scenes, buttons) simply hides them, as depth.
  */
-const TEXT = 'h1, h2, h3, h4, p, li, dt, dd, .closing-stack, .inflated-word';
+const TEXT = 'h1, h2, h3, h4, p, li, dt, dd, .closing-stack, .inflated-word, .intro-orbit';
 
 /** Static spots near the screen edges for reduced motion (fractions of the viewport). */
 const STILL_SPOTS: [number, number][] = [

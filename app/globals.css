@@ -998,6 +998,42 @@
     }
   }
 
+  /*
+   * "In short": label and system orbit share the left column, the statement spans the right.
+   * Phones: label, statement, then the orbit. The orbit has no frame: its edges fade into the page.
+   */
+  .intro-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-areas: 'label' 'text' 'orbit';
+  }
+
+  @media (min-width: 768px) {
+    .intro-grid {
+      grid-template-columns: minmax(0, 3fr) minmax(0, 9fr);
+      grid-template-rows: auto minmax(0, 1fr);
+      grid-template-areas: 'label text' 'orbit text';
+      column-gap: 2rem;
+      row-gap: 0.5rem;
+    }
+  }
+
+  .intro-orbit {
+    grid-area: orbit;
+    position: relative;
+    height: clamp(15rem, 72vw, 22rem);
+    pointer-events: none;
+    -webkit-mask-image: radial-gradient(closest-side, #000 80%, transparent);
+    mask-image: radial-gradient(closest-side, #000 80%, transparent);
+  }
+
+  @media (min-width: 768px) {
+    .intro-orbit {
+      height: auto;
+      min-height: 12rem;
+    }
+  }
+
   /* About: the stack-in-orbit scene (always a night scene, framed like the project covers). */
   .about-universe {
     position: relative;

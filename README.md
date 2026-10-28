@@ -12,8 +12,9 @@ Hosted on **Vercel**: every push to `main` deploys automatically.
   GitHub, LinkedIn and Contact links.
 - **In short** — the opening statement beside an animated system orbit (glass core, orbits, services lit in turn).
 - **Work** — beside the heading, a layered architecture view built from each project's real layers (it cycles
-  through the featured projects and follows the card you hover or focus); then featured project cards with
-  category, stack, an architecture line and Case study / Source / Live demo links; the rest as compact rows. Each project opens in an overlay
+  through the featured projects and follows the one you're viewing); then a featured-project showcase (one
+  project per slide: problem, what was built, key decision, verified numbers, architecture, stack and links;
+  counter, progress, previous/next, arrow keys and swipe); the rest as compact rows. Each project opens in an overlay
   (`#project/<slug>` deep links) and has a full case study at `/work/<slug>`.
 - **Capabilities, About, Contact** — a living code lattice (a turning geodesic wireframe with data moving across
   it, nodes labelled with the capability groups), principles, milestones, timeline, and a contact footer.
@@ -47,7 +48,8 @@ components/
     hero.tsx                Editorial hero, availability + profile links; inflated-word.tsx renders the WebGL word
     sticker-field.tsx       Page-wide floating sticker layer; art in sticker-art.tsx
     home-sections.tsx       Intro, Work, Capabilities and About sections
-    work-grid.tsx           Featured cards, compact rows and the project overlay; covers in project-cover.tsx
+    work-grid.tsx           Showcase + compact rows + the project overlay; covers in project-cover.tsx
+    project-showcase.tsx    Featured-project slides (Web Animations API transitions, no layout shift)
     system-orbit.tsx        In short: system orbit
     system-architecture.tsx Work: layered architecture of the hovered / featured project (lib/project-focus.ts)
     dev-universe.tsx        About: living code lattice

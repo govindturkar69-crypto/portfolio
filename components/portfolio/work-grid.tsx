@@ -7,15 +7,16 @@ import { projectFocus } from '@/lib/project-focus';
 import { sound } from '@/lib/sound';
 import { ArrowLeft, ArrowRight, ArrowUpRight, GitHub } from '../icons';
 import { buttonStyles, ExternalLink } from '../ui';
-import { coverTheme, ProjectCover } from './project-cover';
+import { ProjectCover } from './project-cover';
+import { ProjectShowcase } from './project-showcase';
 
 const HASH_PREFIX = '#project/';
 const slugFromHash = () => (window.location.hash.startsWith(HASH_PREFIX) ? decodeURIComponent(window.location.hash.slice(HASH_PREFIX.length)) : null);
 
 /**
- * Selected work: a uniform two-column grid of project cards with pointer tilt, and an overlay with
- * the project summary. Every card is a real link to its case study, so without JS (or
- * with a modifier-click / middle-click) it simply navigates.
+ * Selected work: the featured projects in a showcase (project-showcase.tsx), the rest as compact
+ * rows, and an overlay with the project summary. Every project is a real link to its case study,
+ * so without JS (or with a modifier-click / middle-click) it simply navigates.
  *
  * Overlay: native <dialog> (focus trap, Esc, top layer). Opening pushes #project/<slug>,
  * so Back closes it and the URL deep-links; focus returns to the card that opened it.
@@ -88,15 +89,9 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
 
   return (
     <>
-      <ul className="grid gap-x-5 gap-y-14 md:grid-cols-2 md:gap-y-20 lg:gap-x-8">
-        {projects
-          .filter((entry) => entry.featured)
-          .map((entry, index) => (
-            <li key={entry.slug} data-reveal style={{ '--d': `${(index % 2) * 110}ms` } as CSSProperties}>
-              <WorkCard project={entry} index={projects.indexOf(entry)} onOpen={open} />
-            </li>
-          ))}
-      </ul>
+      <div data-reveal>
+        <ProjectShowcase projects={projects.filter((entry) => entry.featured)} onOpen={open} />
+      </div>
 
       {projects.some((entry) => !entry.featured) ? (
         <div className="mt-24 md:mt-32">
@@ -149,113 +144,6 @@ function focusHandlers(slug: string) {
 
 function unfocus(event: PointerEvent<HTMLElement>) {
   if (event.pointerType === 'mouse') projectFocus.set(null);
-}
-
-function WorkCard({
-  project,
-  index,
-  onOpen,
-}: {
-  project: Project;
-  index: number;
-  onOpen: (event: MouseEvent<HTMLAnchorElement>, slug: string) => void;
-}) {
-  const coverRef = useRef<HTMLDivElement>(null);
-  const theme = coverTheme(project.slug);
-
-  const tilt = (event: PointerEvent<HTMLElement>) => {
-    if (event.pointerType !== 'mouse') return;
-    const cover = coverRef.current;
-    if (!cover || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const rect = cover.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    const y = ((event.clientY - rect.top) / rect.height) * 2 - 1;
-    cover.style.setProperty('--mx', x.toFixed(3));
-    cover.style.setProperty('--my', y.toFixed(3));
-  };
-  const reset = () => {
-    coverRef.current?.style.setProperty('--mx', '0');
-    coverRef.current?.style.setProperty('--my', '0');
-  };
-
-  return (
-    <article
-      onPointerMove={tilt}
-      onPointerLeave={(event) => {
-        reset();
-        unfocus(event);
-      }}
-      {...focusHandlers(project.slug)}
-      className="work-card group"
-      style={{ '--card-accent': theme.accent } as CSSProperties}
-    >
-      {/* The cover repeats the title link for pointer users; keyboard and screen-reader users get one stop (the title). */}
-      <Link
-        href={`/work/${project.slug}`}
-        onClick={(event) => onOpen(event, project.slug)}
-        tabIndex={-1}
-        aria-hidden="true"
-        className="block"
-      >
-        <div ref={coverRef} className="work-cover">
-          <ProjectCover project={project} />
-          <span className="work-open">
-            <ArrowUpRight size={18} />
-          </span>
-        </div>
-      </Link>
-
-      <div className="mt-4 flex items-center justify-between gap-4 font-mono text-xs tracking-[0.06em] text-subtle uppercase">
-        <span className="truncate">{project.category}</span>
-        <span className="shrink-0 tabular-nums">{project.year ?? String(index + 1).padStart(2, '0')}</span>
-      </div>
-
-      <h3 className="mt-2 text-[clamp(1.75rem,2.6vw,2.5rem)] leading-none font-semibold tracking-[-0.04em]">
-        <Link href={`/work/${project.slug}`} onClick={(event) => onOpen(event, project.slug)} className="work-title-link">
-          <span className="work-title">{project.name}</span>
-        </Link>
-      </h3>
-
-      <p className="mt-3 max-w-[52ch] text-[15px] leading-relaxed text-pretty text-muted">{project.tagline}</p>
-
-      <p className="mt-3 font-mono text-xs leading-relaxed text-subtle">
-        <span className="sr-only">Stack: </span>
-        {project.stack.slice(0, 5).join(' · ')}
-      </p>
-      <p className="work-arch mt-3">
-        <span className="work-arch-label">Architecture</span>
-        {project.architecture.layers.slice(0, 4).map((layer, i) => (
-          <span key={layer.name} className="work-arch-step">
-            {i > 0 ? <span aria-hidden="true"> → </span> : null}
-            {layer.name}
-          </span>
-        ))}
-      </p>
-      {soloProjects.has(project.slug) ? (
-        <p className="mt-1.5 font-mono text-xs text-subtle">
-          <span className="text-fg/80">Solo project</span> · designed and built end to end
-        </p>
-      ) : null}
-
-      <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line pt-4 text-sm">
-        <Link href={`/work/${project.slug}`} className="work-action">
-          Case study
-          <ArrowRight size={14} className="work-action-arrow" />
-        </Link>
-        <ExternalLink href={project.links.github} className="work-action">
-          Source
-          <ArrowUpRight size={14} className="work-action-arrow" />
-        </ExternalLink>
-        {project.links.live ? (
-          <ExternalLink href={project.links.live} className="work-action">
-            Live demo
-            <ArrowUpRight size={14} className="work-action-arrow" />
-          </ExternalLink>
-        ) : null}
-        {project.links.live && project.liveNote ? <span className="font-mono text-xs text-subtle">{project.liveNote}</span> : null}
-      </div>
-    </article>
-  );
 }
 
 /** Compact row for secondary projects: small cover, name, purpose, stack and links. */

@@ -713,32 +713,6 @@
    * Work grid. The cover tilts toward the pointer (--mx/--my from WorkGrid, -1..1);
    * layers inside the cover art drift by the same values for parallax.
    */
-  /* Work cards: the project's top layers, in order. */
-  .work-arch {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0 0.1rem;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    line-height: 1.6;
-    color: var(--color-muted);
-  }
-
-  .work-arch-label {
-    margin-right: 0.6rem;
-    padding: 0.05rem 0.45rem;
-    border: 1px solid var(--color-line);
-    border-radius: 999px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-subtle);
-  }
-
-  .work-arch-step {
-    white-space: nowrap;
-  }
-
   /* Hero: availability + direct profile links. */
   .hero-meta {
     display: flex;
@@ -814,28 +788,6 @@
     box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.45);
   }
 
-  .work-open {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    display: grid;
-    place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: 999px;
-    background: var(--card-accent, var(--color-accent));
-    color: #0b0b0c;
-    opacity: 0;
-    transform: scale(0.6) rotate(-45deg);
-    transition: opacity 0.3s, transform 0.4s var(--ease-out-snappy);
-  }
-
-  .work-card:hover .work-open,
-  .work-card:focus-visible .work-open {
-    opacity: 1;
-    transform: none;
-  }
-
   .work-title {
     background: linear-gradient(currentColor, currentColor) 0 100% / 0 1.5px no-repeat;
     transition: background-size 0.4s var(--ease-out-snappy);
@@ -846,9 +798,277 @@
     background-size: 100% 1.5px;
   }
 
-  .work-card:focus-within .work-open {
-    opacity: 1;
-    transform: none;
+  /*
+   * Featured showcase: counter, progress and controls, a project switcher, then one slide at a
+   * time. Slides share one grid cell, so the height never changes between projects.
+   */
+  .showcase {
+    position: relative;
+  }
+
+  .showcase-bar {
+    display: flex;
+    align-items: center;
+    gap: clamp(1rem, 3vw, 2rem);
+  }
+
+  .showcase-count {
+    flex-shrink: 0;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    color: var(--color-subtle);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .showcase-progress {
+    position: relative;
+    flex: 1;
+    height: 1px;
+    background: var(--color-line-strong);
+    overflow: hidden;
+  }
+
+  .showcase-progress span {
+    position: absolute;
+    inset: 0;
+    background: var(--color-fg);
+    transform-origin: 0 50%;
+    transition: transform 0.7s var(--ease-out-snappy);
+  }
+
+  .showcase-arrow {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 999px;
+    color: var(--color-fg);
+    transition: background-color 0.2s, border-color 0.2s, transform 0.2s var(--ease-out-snappy);
+  }
+
+  .showcase-arrow:hover {
+    border-color: var(--color-fg);
+    background: color-mix(in oklab, var(--color-fg) 6%, transparent);
+  }
+
+  .showcase-arrow:active {
+    transform: scale(0.94);
+  }
+
+  /* Project switcher: a quiet row of names; scrolls sideways on its own on narrow screens. */
+  .showcase-tabs {
+    position: relative;
+    display: flex;
+    gap: 0.25rem 1.25rem;
+    margin-top: 1rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+  }
+
+  .showcase-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .showcase-tabs button {
+    position: relative;
+    min-height: 2.75rem;
+    white-space: nowrap;
+    color: var(--color-muted);
+    transition: color 0.2s;
+  }
+
+  .showcase-tabs button::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.55rem;
+    height: 1px;
+    background: var(--tab-accent, var(--color-accent));
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 0.4s var(--ease-out-snappy);
+  }
+
+  .showcase-tabs button:hover,
+  .showcase-tabs button[aria-current] {
+    color: var(--color-fg);
+  }
+
+  .showcase-tabs button[aria-current]::after {
+    transform: scaleX(1);
+  }
+
+  .showcase-slides {
+    display: grid;
+    margin-top: clamp(1.5rem, 3vw, 2.5rem);
+    touch-action: pan-y;
+    outline: none;
+  }
+
+  .showcase-slides:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 8px;
+    border-radius: 6px;
+  }
+
+  .showcase-slide {
+    --mx: 0;
+    --my: 0;
+    grid-area: 1 / 1;
+    display: grid;
+    gap: clamp(2rem, 4vw, 4rem);
+    align-content: start;
+  }
+
+  @media (min-width: 1024px) {
+    .showcase-slide {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    }
+  }
+
+  .showcase-slide:not([data-active]):not([data-leaving]) {
+    visibility: hidden;
+  }
+
+  .showcase-slide[data-leaving] {
+    pointer-events: none;
+  }
+
+  /* The cover keeps its native 16:10 frame; a soft glow in the project's colour grounds it. */
+  .showcase-visual {
+    position: relative;
+  }
+
+  .showcase-visual::before {
+    content: '';
+    position: absolute;
+    inset: 12% 8% -6%;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in oklab, var(--card-accent) 32%, transparent), transparent);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  .showcase-cover {
+    aspect-ratio: 16 / 10;
+    box-shadow: 0 30px 60px -36px rgb(0 0 0 / 0.5), 0 0 0 1px var(--color-line);
+  }
+
+  .showcase-visual:hover .showcase-cover {
+    box-shadow: 0 40px 70px -36px rgb(0 0 0 / 0.55), 0 0 0 1px var(--color-line-strong);
+  }
+
+  .showcase-visual:hover .work-title,
+  .showcase-slide .work-title-link:hover .work-title {
+    background-size: 100% 1.5px;
+  }
+
+  .showcase-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    margin-top: 1.5rem;
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+    background: var(--color-line);
+  }
+
+  .showcase-metrics > div {
+    display: flex;
+    flex-direction: column-reverse;
+    padding: 1rem 1.1rem;
+    background: var(--color-bg);
+  }
+
+  .showcase-metrics dd {
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .showcase-metrics dt {
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    color: var(--color-subtle);
+  }
+
+  .showcase-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-subtle);
+  }
+
+  .showcase-flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 0;
+    margin-top: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+
+  .showcase-flow li:not(:last-child)::after {
+    content: '→';
+    margin: 0 0.45rem;
+    color: var(--color-subtle);
+  }
+
+  .showcase-solo {
+    padding: 0.1rem 0.5rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 999px;
+    color: var(--color-fg);
+  }
+
+  .showcase-decision {
+    margin-top: 1.75rem;
+    padding-left: 1rem;
+    border-left: 2px solid var(--card-accent, var(--color-accent));
+  }
+
+  .showcase {
+    scroll-margin-top: 6rem;
+  }
+
+  /* "Up next": the way forward from the end of a long slide. */
+  .showcase-next {
+    display: flex;
+    width: 100%;
+    min-height: 3.5rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-top: 1px solid var(--color-line);
+    text-align: left;
+  }
+
+  .showcase-next svg {
+    transition: transform 0.3s var(--ease-out-snappy);
+  }
+
+  .showcase-next:hover svg {
+    transform: translateX(4px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .showcase-progress span,
+    .showcase-tabs button::after {
+      transition: none;
+    }
   }
 
   /* Secondary projects: compact editorial rows with a small cover. */

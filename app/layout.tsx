@@ -1,12 +1,15 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
-import { CustomCursor } from '@/components/portfolio/custom-cursor';
+import dynamic from 'next/dynamic';
 import { ScrollReveal } from '@/components/portfolio/scroll-reveal';
 import { PortfolioHUD } from '@/components/portfolio/portfolio-hud';
 import { SiteFooter } from '@/components/portfolio/site-footer';
 import { site } from '@/data/site';
 import { THEME_COLORS, themeScript } from '@/lib/theme';
 import './globals.css';
+
+// Fine-pointer nicety: its own chunk, off the critical path.
+const CustomCursor = dynamic(() => import('@/components/portfolio/custom-cursor').then((m) => m.CustomCursor));
 
 const title = `${site.name} — Full-Stack Software Engineer`;
 

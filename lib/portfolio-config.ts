@@ -42,7 +42,7 @@ export const portfolioConfig = {
      * Floating sticker layer: how many stickers (fewer on phones), when the first one
      * drops in and the gap between drops (seconds), and how far the cursor's push reaches (px).
      */
-    field: { desktop: 6, mobile: 4, delay: 0.3, stagger: 0.18, cursorRadius: 160 },
+    field: { desktop: 6, mobile: 3, delay: 0.3, stagger: 0.18, cursorRadius: 160 },
   },
   dock: [
     { id: 'work', label: 'Work', href: '/#work' },

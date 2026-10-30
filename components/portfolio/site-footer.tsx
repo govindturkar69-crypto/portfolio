@@ -2,6 +2,7 @@ import { site } from '@/data/site';
 import { CopyEmailButton } from '../copy-email-button';
 import { ArrowUpRight, Download, GitHub, LinkedIn } from '../icons';
 import { buttonStyles, ExternalLink } from '../ui';
+import { ContactForm } from './contact-form';
 import { container } from './home-sections';
 import { LocalClock } from './local-clock';
 
@@ -49,14 +50,25 @@ export function SiteFooter() {
             <Download size={15} />
             Résumé (PDF)
           </a>
-          <ExternalLink href={site.github} className={buttonStyles.ghost}>
+          <ExternalLink href={site.github} className={buttonStyles.tertiary}>
             <GitHub size={15} />
             GitHub
           </ExternalLink>
-          <ExternalLink href={site.linkedin} className={buttonStyles.ghost}>
+          <ExternalLink href={site.linkedin} className={buttonStyles.tertiary}>
             <LinkedIn size={15} />
             LinkedIn
           </ExternalLink>
+        </div>
+
+        {/* Or write here: composes the message in the visitor's email app (static site, no server). */}
+        <div className="mt-20 grid gap-8 border-t border-line pt-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] lg:gap-16">
+          <div>
+            <h3 className="text-2xl font-semibold tracking-[-0.03em]">Prefer a form?</h3>
+            <p className="mt-3 max-w-[38ch] text-[15px] leading-relaxed text-pretty text-muted">
+              Tell me about the role or the project. I read every message and reply from {site.email}.
+            </p>
+          </div>
+          <ContactForm />
         </div>
 
         <div className="mt-24 grid gap-6 border-t border-line pt-6 font-mono text-xs tracking-[0.04em] text-subtle uppercase sm:grid-cols-3 sm:items-center">
@@ -67,7 +79,7 @@ export function SiteFooter() {
             <LocalClock />
           </p>
           <p className="sm:text-right">
-            <a href="#top" className="transition-colors duration-200 hover:text-fg">
+            <a href="#top" className="inline-flex min-h-11 items-center transition-colors duration-200 hover:text-fg">
               Back to top ↑
             </a>
           </p>

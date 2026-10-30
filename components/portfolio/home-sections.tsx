@@ -5,9 +5,12 @@ import { experience, site, type TimelineEntry } from '@/data/site';
 import { alsoUsed, stackGroups } from '@/data/stack';
 import { ArrowUpRight, Download, GitHub, LinkedIn } from '../icons';
 import { ExternalLink } from '../ui';
-import { DevUniverse } from './dev-universe';
-import { SystemArchitecture } from './system-architecture';
-import { SystemOrbit } from './system-orbit';
+import dynamic from 'next/dynamic';
+
+// Canvas scenes load in their own chunks after the first render (they start after load anyway).
+const DevUniverse = dynamic(() => import('./dev-universe').then((m) => m.DevUniverse));
+const SystemArchitecture = dynamic(() => import('./system-architecture').then((m) => m.SystemArchitecture));
+const SystemOrbit = dynamic(() => import('./system-orbit').then((m) => m.SystemOrbit));
 import { WorkGrid } from './work-grid';
 
 export const container = 'mx-auto w-full max-w-[88rem] px-4 sm:px-6 lg:px-10';

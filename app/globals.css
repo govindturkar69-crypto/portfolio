@@ -452,6 +452,9 @@
     text-transform: uppercase;
     color: var(--color-muted);
     white-space: nowrap;
+    /* Long weather labels end in an ellipsis instead of running under the nav / Menu button. */
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .hud-year {
@@ -537,9 +540,175 @@
   }
 
   @media (pointer: coarse) {
-    .hud-nav-link,
-    .hud-brand {
+    .hud-nav-link {
       min-height: 2rem;
+    }
+
+    /* 44px tap target; the negative margins keep the header's rhythm unchanged. */
+    .hud-brand {
+      min-height: 2.75rem;
+      margin-block: -0.625rem;
+    }
+  }
+
+  /* Phones: the bracketed groups give way to one Menu button and a full-screen menu. */
+  .hud-menu-button {
+    display: none;
+  }
+
+  @media (max-width: 767.98px) {
+    .hud-nav {
+      display: none;
+    }
+
+    .hud-menu-button {
+      display: inline-flex;
+      flex-shrink: 0;
+      align-items: center;
+      min-height: 2.75rem;
+      margin-top: -0.375rem;
+      padding: 0 1rem;
+      border: 1px solid var(--color-line-strong);
+      border-radius: 999px;
+      background: color-mix(in oklab, var(--color-bg) 80%, transparent);
+      backdrop-filter: blur(8px);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-fg);
+      pointer-events: auto;
+    }
+  }
+
+  .mobile-menu {
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--color-bg);
+    color: var(--color-fg);
+  }
+
+  .mobile-menu::backdrop {
+    background: transparent;
+  }
+
+  .mobile-menu[open] {
+    animation: menu-in 0.35s var(--ease-out-snappy);
+  }
+
+  .mobile-menu-inner {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: max(1.25rem, env(safe-area-inset-top)) max(1.25rem, env(safe-area-inset-right)) max(1.5rem, env(safe-area-inset-bottom))
+      max(1.25rem, env(safe-area-inset-left));
+  }
+
+  .mobile-menu-close {
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .mobile-menu-link {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--color-line);
+    font-family: var(--font-heading);
+    font-size: clamp(2.75rem, 14vw, 4rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.045em;
+    color: var(--color-fg);
+  }
+
+  .mobile-menu-link[aria-current] {
+    color: var(--color-accent);
+  }
+
+  .mobile-menu-index {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: var(--color-subtle);
+  }
+
+  .mobile-menu-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  /* Controls sit at the bottom of the screen, within thumb reach. */
+  nav + .mobile-menu-row {
+    margin-top: auto;
+    padding-top: 2rem;
+  }
+
+  .mobile-menu-row + .mobile-menu-row {
+    margin-top: 0.75rem;
+  }
+
+  .mobile-menu-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 999px;
+    font-size: 0.9rem;
+    color: var(--color-fg);
+  }
+
+  .mobile-menu[open] li,
+  .mobile-menu[open] .mobile-menu-row {
+    animation: menu-item-in 0.5s var(--ease-out-snappy) backwards;
+    animation-delay: calc(80ms + var(--i, 0) * 60ms);
+  }
+
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+    }
+  }
+
+  @keyframes menu-item-in {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-menu[open],
+    .mobile-menu[open] li,
+    .mobile-menu[open] .mobile-menu-row {
+      animation: none;
+    }
+  }
+
+  /* Touch screens: every standalone control is at least 44px tall. */
+  @media (pointer: coarse) {
+    :root .hero-link,
+    :root .work-action,
+    :root .about-chip,
+    :root .footer-email {
+      min-height: 2.75rem;
     }
   }
 
@@ -1004,7 +1173,7 @@
 
   .showcase-eyebrow {
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--color-subtle);
@@ -1456,6 +1625,68 @@
     .closing-stack span:nth-child(3) {
       align-self: flex-start;
     }
+  }
+
+  /* Contact form: quiet fields on hairlines, errors in text (never colour alone). */
+  .contact-label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-subtle);
+  }
+
+  .contact-input {
+    display: block;
+    width: 100%;
+    min-height: 2.75rem;
+    margin-top: 0.4rem;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 12px;
+    background: color-mix(in oklab, var(--color-fg) 3%, transparent);
+    font-size: 1rem;
+    color: var(--color-fg);
+    transition: border-color 0.2s, background-color 0.2s;
+  }
+
+  .contact-input:hover {
+    border-color: color-mix(in oklab, var(--color-fg) 30%, transparent);
+  }
+
+  .contact-input:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+    border-color: transparent;
+  }
+
+  .contact-input[aria-invalid] {
+    border-color: #b42318;
+  }
+
+  html.dark .contact-input[aria-invalid] {
+    border-color: #f97066;
+  }
+
+  .contact-textarea {
+    min-height: 8rem;
+    resize: vertical;
+  }
+
+  .contact-error {
+    margin-top: 0.4rem;
+    font-size: 0.875rem;
+    color: #b42318;
+  }
+
+  html.dark .contact-error {
+    color: #fda29b;
+  }
+
+  .contact-error::before {
+    content: '! ';
+    font-weight: 700;
   }
 
   .footer-email {

@@ -8,7 +8,10 @@ import { sound } from '@/lib/sound';
 import { ArrowLeft, ArrowRight, ArrowUpRight, GitHub } from '../icons';
 import { buttonStyles, ExternalLink } from '../ui';
 import { ProjectCover } from './project-cover';
-import { ProjectShowcase } from './project-showcase';
+import dynamic from 'next/dynamic';
+
+// Below the fold: the showcase's code loads in its own chunk (its HTML is still server-rendered).
+const ProjectShowcase = dynamic(() => import('./project-showcase').then((m) => m.ProjectShowcase));
 
 const HASH_PREFIX = '#project/';
 const slugFromHash = () => (window.location.hash.startsWith(HASH_PREFIX) ? decodeURIComponent(window.location.hash.slice(HASH_PREFIX.length)) : null);

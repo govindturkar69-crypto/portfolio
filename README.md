@@ -18,7 +18,10 @@ Hosted on **Vercel**: every push to `main` deploys automatically.
   (`#project/<slug>` deep links) and has a full case study at `/work/<slug>`.
 - **Capabilities, About, Contact** — a living code lattice (a turning geodesic wireframe with data moving across
   it, nodes labelled with the capability groups), principles, milestones, timeline, and a contact footer.
-- **Navigation** — a fixed HUD with Work / About / Contact links, theme and sound toggles, and a résumé download.
+- **Navigation** — a fixed HUD with Work / About / Contact links, theme and sound toggles, and a résumé download;
+  on phones a Menu button opens a full-screen menu (native `<dialog>`) with the same links and controls.
+- **Contact** — email, copy, résumé and profiles, plus a form that composes the message in the visitor's own email
+  app (the site is static, so nothing is sent from the page).
 - **Floating stickers** — technology stickers fall in from above, then drift within bounded areas across the page.
 
 ## Projects
@@ -55,9 +58,9 @@ components/
     dev-universe.tsx        About: living code lattice
     scene.ts                Shared canvas 3D helpers: projection, theme palette, DPR sizing, on-screen-only loop,
                             reduced motion
-    warp-tunnel.tsx         Scroll-linked starfield with the three statements
+    warp-tunnel.tsx         Scroll-linked starfield; its GSAP engine (warp-engine.ts) loads on idle / when near
     portfolio-hud.tsx       Fixed HUD: brand, clock, weather, pointer readout and hud-nav.tsx
-    site-footer.tsx         Contact section and footer (every page)
+    site-footer.tsx         Contact section and footer (every page); contact-form.tsx composes a mailto: message
     scroll-reveal.tsx       One IntersectionObserver that reveals elements once
     custom-cursor.tsx       Directional cursor with magnetic snapping (fine pointers only)
   architecture-diagram.tsx copy-email-button.tsx icons.tsx ui.tsx
@@ -92,7 +95,7 @@ Only add live links that work, and set `liveNote` if a host may need waking.
 
 ## Stack
 
-Next.js 16 App Router · React 19 · TypeScript · Tailwind CSS v4 · GSAP · WebGL · Vercel
+Next.js 16 App Router · React 19 · TypeScript · Tailwind CSS v4 · GSAP (lazy-loaded) · WebGL · Vercel
 
 ## Development
 

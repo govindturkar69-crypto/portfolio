@@ -11,7 +11,7 @@ const DEPTH = 1600;
  * The warp tunnel's animation engine (see warp-tunnel.tsx). Loaded on demand, so GSAP never
  * competes with the first render. Returns the cleanup.
  */
-export function startWarp(section: HTMLElement, starCount: number): () => void {
+export function startWarp(section: HTMLElement, starCount: number, reduced: boolean): () => void {
   const canvas = section.querySelector<HTMLCanvasElement>('canvas');
   const ctx = canvas?.getContext('2d');
   if (!canvas || !ctx) return () => {};
@@ -107,11 +107,13 @@ export function startWarp(section: HTMLElement, starCount: number): () => void {
   };
 
   const mm = gsap.matchMedia();
-  mm.add({ cinematic: '(min-width: 768px) and (prefers-reduced-motion: no-preference)', calm: '(max-width: 767px), (prefers-reduced-motion: reduce)' }, (context) => {
+  // Calm (stacked statements, one still frame) on phones and whenever motion is reduced.
+  mm.add({ wide: '(min-width: 768px)', narrow: '(max-width: 767px)' }, (context) => {
+    const cinematic = Boolean(context.conditions?.wide) && !reduced;
     // The tall sticky layout exists only once JS is driving it; server HTML is the calm one.
-    if (context.conditions?.cinematic) section.dataset.live = 'true';
+    if (cinematic) section.dataset.live = 'true';
     resize();
-    if (context.conditions?.calm) {
+    if (!cinematic) {
       // Static: one long-exposure frame behind stacked statements; redrawn on resize and theme change.
       const still = () => {
         ctx.clearRect(0, 0, width, height);

@@ -14,11 +14,13 @@ Hosted on **Vercel**: every push to `main` deploys automatically.
 - **Work** — beside the heading, a layered architecture view built from each project's real layers (it cycles
   through the featured projects and follows the one you're viewing); then a featured-project showcase (one
   project per slide: problem, what was built, key decision, verified numbers, architecture, stack and links;
-  counter, progress, previous/next, arrow keys and swipe); the rest as compact rows. Each project opens in an overlay
+  counter, progress, previous/next, arrow keys and swipe); then an archive of every project with area filters
+  and search (name, description, category or technology). Each project opens in an overlay
   (`#project/<slug>` deep links) and has a full case study at `/work/<slug>`.
 - **Capabilities, About, Contact** — a living code lattice (a turning geodesic wireframe with data moving across
   it, nodes labelled with the capability groups), principles, milestones, timeline, and a contact footer.
-- **Navigation** — a fixed HUD with Work / About / Contact links, theme and sound toggles, and a résumé download;
+- **Navigation** — a fixed HUD with Work / About / Contact links, theme, sound and Motion toggles, a résumé download
+  and a reading-progress hairline;
   on phones a Menu button opens a full-screen menu (native `<dialog>`) with the same links and controls.
 - **Contact** — email, copy, résumé and profiles, plus a form that composes the message in the visitor's own email
   app (the site is static, so nothing is sent from the page).
@@ -53,6 +55,8 @@ components/
     home-sections.tsx       Intro, Work, Capabilities and About sections
     work-grid.tsx           Showcase + compact rows + the project overlay; covers in project-cover.tsx
     project-showcase.tsx    Featured-project slides (Web Animations API transitions, no layout shift)
+    project-archive.tsx     Every project: area filters + search over the compact rows
+    scroll-progress.tsx     Reading-progress hairline at the top of the viewport
     system-orbit.tsx        In short: system orbit
     system-architecture.tsx Work: layered architecture of the hovered / featured project (lib/project-focus.ts)
     dev-universe.tsx        About: living code lattice
@@ -66,7 +70,7 @@ components/
   architecture-diagram.tsx copy-email-button.tsx icons.tsx ui.tsx
 data/                     projects.ts, site.ts, stack.ts — all content lives here
 lib/                      portfolio-config.ts (copy + motion settings), theme.ts, sound.ts, clipboard.ts,
-                          project-focus.ts
+                          project-focus.ts, motion.ts + use-motion.ts (the Motion switch)
 public/                   Résumé PDF, project screenshots, OG image, favicon
 ```
 
@@ -79,6 +83,9 @@ public/                   Résumé PDF, project screenshots, OG image, favicon
 - **3D scenes.** Transparent canvases (no frames; edges fade into the page) with a small perspective projection
   and one shared palette per theme (no 3D library). They start after load +
   idle, animate only while on screen, and draw a single still frame under reduced motion.
+- **Motion switch.** Motion is reduced when the system asks for it or when the visitor turns Motion off in the
+  header (remembered as `gt-motion`, applied before first paint). Every scene, the stickers, reveals, the cursor,
+  the showcase and the warp read the same store (`lib/motion.ts`); CSS animations settle at once.
 - **Accessibility.** Semantic landmarks, skip link, visible focus, WCAG AA contrast on every token, label-in-name
   controls, and `prefers-reduced-motion` respected everywhere.
 

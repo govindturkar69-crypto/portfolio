@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { motion } from '@/lib/motion';
 
 /*
  * "Inflated glass" lettering without Three.js.
@@ -206,7 +207,7 @@ export function InflatedWord({ word, roughness = 0.25, className = '' }: Props) 
     let disposed = false;
     let frame = 0;
     const tilt = { x: 0, y: 0, tx: 0, ty: 0 };
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduced = motion.reduced();
     const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
     const program = gl.createProgram()!;

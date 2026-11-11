@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useReducedMotion } from '@/lib/use-motion';
 import { portfolioConfig } from '@/lib/portfolio-config';
 
-const CINEMATIC = '(min-width: 768px) and (prefers-reduced-motion: no-preference)';
+const WIDE = '(min-width: 768px)';
 
 /**
  * Hyperspace warp: a 2D-canvas starfield (no WebGL needed) inside a CSS sticky stage.
@@ -16,18 +17,19 @@ const CINEMATIC = '(min-width: 768px) and (prefers-reduced-motion: no-preference
  * browser is idle after load or the section comes near, so it never competes with the first
  * render. The tall layout is set at hydration, so the page height is final early (anchor links
  * land correctly). The loop runs only while the stage is on screen and the tab is visible.
- * Phones and reduced motion get a normal-height section with the statements stacked and one
+ * Phones and reduced motion (system or the Motion switch) get a normal-height section with the statements stacked and one
  * static frame.
  */
 export function WarpTunnel() {
   const root = useRef<HTMLElement>(null);
   const { statements, stars: starCount } = portfolioConfig.warp;
+  const reduced = useReducedMotion();
 
   useEffect(() => {
     const section = root.current;
     if (!section) return;
     // The tall sticky layout exists only once JS drives it; server HTML is the calm one.
-    if (window.matchMedia(CINEMATIC).matches) section.dataset.live = 'true';
+    if (window.matchMedia(WIDE).matches && !reduced) section.dataset.live = 'true';
 
     let stop: (() => void) | null = null;
     let cancelled = false;
@@ -36,7 +38,7 @@ export function WarpTunnel() {
       if (stop || cancelled) return;
       stop = () => {};
       void import('./warp-engine').then(({ startWarp }) => {
-        if (!cancelled) stop = startWarp(section, starCount);
+        if (!cancelled) stop = startWarp(section, starCount, reduced);
       });
     };
     const near = new IntersectionObserver((entries) => entries.some((e) => e.isIntersecting) && load(), { rootMargin: '1200px 0px' });
@@ -58,7 +60,7 @@ export function WarpTunnel() {
       stop?.();
       delete section.dataset.live;
     };
-  }, [starCount]);
+  }, [starCount, reduced]);
 
   return (
     <section ref={root} id="warp" aria-labelledby="warp-title" className="warp">

@@ -396,6 +396,37 @@
     --hud-pad: clamp(0.75rem, 1.6vw, 1.5rem);
   }
 
+  /* Motion switched off in the header: every CSS animation and transition settles at once. */
+  html[data-motion='off'] *,
+  html[data-motion='off'] *::before,
+  html[data-motion='off'] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html[data-motion='off'] {
+    scroll-behavior: auto !important;
+  }
+
+  /* Reading progress: a hairline at the very top of the viewport. */
+  .scroll-progress {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 41;
+    height: 2px;
+    pointer-events: none;
+  }
+
+  .scroll-progress span {
+    display: block;
+    height: 100%;
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+
   .hud-frame {
     position: fixed;
     inset: calc(var(--hud-pad) * 0.5);
@@ -1238,6 +1269,94 @@
     .showcase-tabs button::after {
       transition: none;
     }
+  }
+
+  /* Project archive: area filters and a search field above the rows. */
+  .archive-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .archive-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .archive-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    transition: color 0.2s, border-color 0.2s, background-color 0.2s;
+  }
+
+  .archive-filter:hover {
+    color: var(--color-fg);
+    border-color: color-mix(in oklab, var(--color-fg) 30%, transparent);
+  }
+
+  .archive-filter[aria-pressed='true'] {
+    border-color: var(--color-fg);
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+
+  .archive-filter[aria-pressed='true'] span {
+    color: color-mix(in oklab, var(--color-bg) 70%, transparent);
+  }
+
+  .archive-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    color: var(--color-subtle);
+  }
+
+  @media (min-width: 768px) {
+    .archive-search {
+      width: min(22rem, 100%);
+    }
+  }
+
+  .archive-search svg {
+    position: absolute;
+    left: 0.9rem;
+    pointer-events: none;
+  }
+
+  .archive-input {
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0 1rem 0 2.5rem;
+    border: 1px solid var(--color-line-strong);
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--color-fg) 3%, transparent);
+    font-size: 1rem;
+    color: var(--color-fg);
+  }
+
+  .archive-input::placeholder {
+    color: var(--color-subtle);
+  }
+
+  .archive-input:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+  }
+
+  .archive-empty {
+    padding: 2.5rem 0;
+    border-bottom: 1px solid var(--color-line);
   }
 
   /* Secondary projects: compact editorial rows with a small cover. */

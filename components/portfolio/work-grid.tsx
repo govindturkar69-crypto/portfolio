@@ -1,13 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type FocusEvent, type MouseEvent, type PointerEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, type FocusEvent, type MouseEvent, type PointerEvent } from 'react';
 import { soloProjects, type Project } from '@/data/projects';
 import { projectFocus } from '@/lib/project-focus';
 import { sound } from '@/lib/sound';
 import { ArrowLeft, ArrowRight, ArrowUpRight, GitHub } from '../icons';
 import { buttonStyles, ExternalLink } from '../ui';
-import { ProjectCover } from './project-cover';
+import { ProjectArchive } from './project-archive';
+import { coverTheme, ProjectCover } from './project-cover';
 import dynamic from 'next/dynamic';
 
 // Below the fold: the showcase's code loads in its own chunk (its HTML is still server-rendered).
@@ -17,8 +18,8 @@ const HASH_PREFIX = '#project/';
 const slugFromHash = () => (window.location.hash.startsWith(HASH_PREFIX) ? decodeURIComponent(window.location.hash.slice(HASH_PREFIX.length)) : null);
 
 /**
- * Selected work: the featured projects in a showcase (project-showcase.tsx), the rest as compact
- * rows, and an overlay with the project summary. Every project is a real link to its case study,
+ * Selected work: the featured projects in a showcase (project-showcase.tsx), every project in a
+ * filterable archive of compact rows (project-archive.tsx), and an overlay with the project summary. Every project is a real link to its case study,
  * so without JS (or with a modifier-click / middle-click) it simply navigates.
  *
  * Overlay: native <dialog> (focus trap, Esc, top layer). Opening pushes #project/<slug>,
@@ -96,23 +97,16 @@ export function WorkGrid({ projects }: { projects: Project[] }) {
         <ProjectShowcase projects={projects.filter((entry) => entry.featured)} onOpen={open} />
       </div>
 
-      {projects.some((entry) => !entry.featured) ? (
-        <div className="mt-24 md:mt-32">
-          <div className="flex items-center gap-4" data-reveal>
-            <h3 className="about-label">More projects</h3>
-            <span aria-hidden="true" className="about-rule" data-reveal="line" />
-          </div>
-          <ul className="mt-2">
-            {projects
-              .filter((entry) => !entry.featured)
-              .map((entry, i) => (
-                <li key={entry.slug} data-reveal style={{ '--d': `${i * 90}ms` } as CSSProperties}>
-                  <WorkRow project={entry} index={projects.indexOf(entry)} onOpen={open} />
-                </li>
-              ))}
-          </ul>
+      {/* Every project, filterable and searchable (the featured ones are also in the showcase above). */}
+      <div className="mt-24 md:mt-32" data-reveal>
+        <div className="flex items-center gap-4">
+          <h3 className="about-label">All projects</h3>
+          <span aria-hidden="true" className="about-rule" />
         </div>
-      ) : null}
+        <div className="mt-6">
+          <ProjectArchive projects={projects} renderRow={(entry) => <WorkRow project={entry} index={projects.indexOf(entry)} onOpen={open} />} />
+        </div>
+      </div>
 
       <dialog
         ref={dialogRef}
@@ -149,6 +143,34 @@ function unfocus(event: PointerEvent<HTMLElement>) {
   if (event.pointerType === 'mouse') projectFocus.set(null);
 }
 
+/**
+ * Archive thumbnails are decorative: each draws when its row comes near the viewport, over a
+ * placeholder in the cover's own colour, so the long list adds no DOM to the first load.
+ */
+function LazyCover({ project }: { project: Project }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setShow(true);
+        observer.disconnect();
+      },
+      { rootMargin: '600px 0px' },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return (
+    <div ref={ref} className="h-full w-full" style={{ background: coverTheme(project.slug).bg }}>
+      {show ? <ProjectCover project={project} /> : null}
+    </div>
+  );
+}
+
 /** Compact row for secondary projects: small cover, name, purpose, stack and links. */
 function WorkRow({
   project,
@@ -162,7 +184,7 @@ function WorkRow({
   return (
     <article className="work-row group" onPointerLeave={unfocus} {...focusHandlers(project.slug)}>
       <Link href={`/work/${project.slug}`} onClick={(event) => onOpen(event, project.slug)} tabIndex={-1} aria-hidden="true" className="work-row-thumb">
-        <ProjectCover project={project} />
+        <LazyCover project={project} />
       </Link>
       <div className="min-w-0">
         <div className="flex items-baseline justify-between gap-4 font-mono text-xs tracking-[0.06em] text-subtle uppercase">

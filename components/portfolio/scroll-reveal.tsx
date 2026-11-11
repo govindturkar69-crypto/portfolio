@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
+import { useReducedMotion } from '@/lib/use-motion';
 
 const SELECTOR = '.reveal, [data-reveal]';
 
@@ -11,14 +12,16 @@ const SELECTOR = '.reveal, [data-reveal]';
  * scrolling back and forth).
  *
  * Hidden states only apply under html[data-reveal-ready], which this component sets after
- * hydration and only when motion is allowed. Without JS, or with reduced motion, all
+ * hydration and only when motion is allowed. Without JS, or with motion reduced (system or the
+ * Motion switch), all
  * content is simply visible.
  */
 export function ScrollReveal() {
   const pathname = usePathname();
+  const reduced = useReducedMotion();
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (reduced) return;
     const html = document.documentElement;
     const observer = new IntersectionObserver(
       (entries) => {
@@ -43,8 +46,9 @@ export function ScrollReveal() {
     return () => {
       observer.disconnect();
       mutations.disconnect();
+      delete html.dataset.revealReady;
     };
-  }, [pathname]);
+  }, [pathname, reduced]);
 
   return null;
 }

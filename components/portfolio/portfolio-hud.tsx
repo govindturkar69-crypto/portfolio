@@ -3,6 +3,7 @@ import { site } from '@/data/site';
 import { HUDNav } from './hud-nav';
 import { LocalClock } from './local-clock';
 import { PointerReadout } from './pointer-readout';
+import { ScrollProgress } from './scroll-progress';
 import { WeatherReadout } from './weather-readout';
 
 /**
@@ -15,6 +16,7 @@ export function PortfolioHUD() {
     <>
       <div aria-hidden="true" className="hud-frame" />
       <div aria-hidden="true" className="hud-fade" />
+      <ScrollProgress />
       <header className="hud-top">
         <div className="flex min-w-0 flex-col gap-1">
           <Link href="/" data-magnetic className="hud-brand">

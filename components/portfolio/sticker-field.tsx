@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useReducedMotion } from '@/lib/use-motion';
 import { portfolioConfig } from '@/lib/portfolio-config';
 import { STICKERS, StickerArt } from './sticker-art';
 
@@ -74,13 +75,13 @@ const STILL_SPOTS: [number, number][] = [
  */
 export function StickerField() {
   const root = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
 
   useEffect(() => {
     const layer = root.current;
     if (!layer) return;
     const { field } = portfolioConfig.stickers;
     const small = window.innerWidth < 768;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const els = [...layer.querySelectorAll<HTMLElement>('[data-sticker]')];
     const count = small ? field.mobile : field.desktop;
@@ -300,7 +301,7 @@ export function StickerField() {
       document.removeEventListener('visibilitychange', start);
       delete layer.dataset.live;
     };
-  }, []);
+  }, [reduced]);
 
   return (
     <div ref={root} aria-hidden="true" data-sticker-field className="sticker-layer">

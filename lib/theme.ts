@@ -1,3 +1,5 @@
+import { motion } from './motion';
+
 /**
  * Paper (light) / ink (dark) theme. Plain module (not 'use client') so the
  * server layout can inline the pre-paint script.
@@ -30,7 +32,7 @@ export const theme = {
       applied = true;
       theme.apply(next);
     };
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduced = motion.reduced();
     type Transition = { ready: Promise<void>; finished: Promise<void>; updateCallbackDone: Promise<void> };
     const doc = document as Document & { startViewTransition?: (update: () => void) => Transition };
     if (reduced) {

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useCallback, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type MouseEvent, type PointerEvent } from 'react';
 import { soloProjects, type Project } from '@/data/projects';
+import { motion } from '@/lib/motion';
 import { projectFocus } from '@/lib/project-focus';
 import { sound } from '@/lib/sound';
 import { ArrowLeft, ArrowRight, ArrowUpRight } from '../icons';
@@ -67,14 +68,14 @@ export function ProjectShowcase({ projects, onOpen }: Props) {
     const tabs = tabsRef.current;
     const tab = tabs?.children[state.active] as HTMLElement | undefined;
     if (tabs && tab && tabs.scrollWidth > tabs.clientWidth) {
-      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const reduced = motion.reduced();
       tabs.scrollTo({ left: tab.offsetLeft - (tabs.clientWidth - tab.offsetWidth) / 2, behavior: reduced ? 'auto' : 'smooth' });
     }
     if (state.from === null) return;
     const incoming = slideRefs.current[state.active];
     const outgoing = slideRefs.current[state.from];
     if (!incoming || !outgoing || typeof incoming.animate !== 'function') return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (motion.reduced()) {
       const fade = incoming.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 180 });
       const out = outgoing.animate([{ opacity: 0 }, { opacity: 0 }], { duration: 1, fill: 'forwards' });
       return settle([fade, out], 400);
@@ -215,13 +216,14 @@ export function ProjectShowcase({ projects, onOpen }: Props) {
             count={count}
             active={i === state.active}
             leaving={i === state.from}
+            seen={i === state.active || i === state.from}
             onOpen={onOpen}
             nextName={projects[(i + 1) % count].name}
             onNext={() => {
               go(i + 1, 1);
               // From the end of a long slide (phones), bring the new one into view from its top.
               const top = rootRef.current?.getBoundingClientRect().top ?? 0;
-              if (top < 0) rootRef.current?.scrollIntoView({ block: 'start', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+              if (top < 0) rootRef.current?.scrollIntoView({ block: 'start', behavior: motion.reduced() ? 'auto' : 'smooth' });
             }}
             ref={(el) => {
               slideRefs.current[i] = el;
@@ -239,6 +241,7 @@ function Slide({
   count,
   active,
   leaving,
+  seen,
   onOpen,
   nextName,
   onNext,
@@ -249,6 +252,8 @@ function Slide({
   count: number;
   active: boolean;
   leaving: boolean;
+  /** Only the visible (and leaving) slide draws its cover; the rest stay light until shown. */
+  seen: boolean;
   onOpen: Props['onOpen'];
   nextName: string;
   onNext: () => void;
@@ -262,7 +267,7 @@ function Slide({
   const tilt = (event: PointerEvent<HTMLElement>) => {
     if (event.pointerType !== 'mouse') return;
     const cover = coverRef.current;
-    if (!cover || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!cover || motion.reduced()) return;
     const rect = cover.getBoundingClientRect();
     cover.style.setProperty('--mx', (((event.clientX - rect.left) / rect.width) * 2 - 1).toFixed(3));
     cover.style.setProperty('--my', (((event.clientY - rect.top) / rect.height) * 2 - 1).toFixed(3));
@@ -288,7 +293,7 @@ function Slide({
         <div data-visual className="showcase-visual" onPointerMove={tilt} onPointerLeave={untilt}>
           <Link href={`/work/${project.slug}`} onClick={(event) => onOpen(event, project.slug)} tabIndex={-1} aria-hidden="true" className="block">
             <div ref={coverRef} className="work-cover showcase-cover">
-              <ProjectCover project={project} priority={index === 0} />
+              {seen ? <ProjectCover project={project} priority={index === 0} /> : <div className="h-full w-full" style={{ background: theme.bg }} />}
             </div>
           </Link>
         </div>

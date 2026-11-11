@@ -3,14 +3,16 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { site } from '@/data/site';
+import { motion } from '@/lib/motion';
 import { portfolioConfig } from '@/lib/portfolio-config';
 import { sound } from '@/lib/sound';
 import { theme } from '@/lib/theme';
+import { useMotionEnabled } from '@/lib/use-motion';
 import { ArrowUpRight, Download, GitHub, LinkedIn } from '../icons';
 
 /**
  * Top-right text navigation in bracketed mono groups: section links, then the quiet
- * controls (theme, sound) and a résumé download. The active link follows the section in view via an
+ * controls (theme, sound, motion) and a résumé download. The active link follows the section in view via an
  * IntersectionObserver band across the middle of the viewport (no scroll listener).
  * Below 768px the groups give way to a Menu button and a full-screen menu (MobileMenu).
  */
@@ -18,6 +20,7 @@ export function HUDNav() {
   const pathname = usePathname();
   const [active, setActive] = useState<string | null>(null);
   const soundOn = useSyncExternalStore(sound.subscribe, sound.isEnabled, () => false);
+  const motionOn = useMotionEnabled();
   // Server snapshot is light; the head script may already have applied dark before hydration.
   const dark = useSyncExternalStore(
     theme.subscribe,
@@ -45,7 +48,7 @@ export function HUDNav() {
 
   return (
     <>
-      <MobileMenu active={pathname === '/' ? active : null} dark={dark} soundOn={soundOn} />
+      <MobileMenu active={pathname === '/' ? active : null} dark={dark} soundOn={soundOn} motionOn={motionOn} />
       <nav aria-label="Primary" className="hud-nav">
         <ul className="hud-group">
           {portfolioConfig.dock.map((item, index) => {
@@ -101,6 +104,15 @@ export function HUDNav() {
             <span aria-hidden="true" className="hud-sep">
               /
             </span>
+            <button type="button" data-magnetic className="hud-nav-link" data-motion-toggle onClick={() => motion.set(!motionOn)}>
+              Motion:{motionOn ? 'On' : 'Off'}
+              <span className="sr-only">, turn animation {motionOn ? 'off' : 'on'}</span>
+            </button>
+          </li>
+          <li className="flex items-center">
+            <span aria-hidden="true" className="hud-sep">
+              /
+            </span>
             <a href={site.resume} download data-magnetic className="hud-nav-link">
               Résumé
               <span className="sr-only"> (PDF download)</span>
@@ -114,9 +126,9 @@ export function HUDNav() {
 
 /**
  * Phones: a Menu button opens a full-screen native <dialog> (focus trap, Esc, scroll lock)
- * with large section links, the theme / sound / résumé controls and direct contact links.
+ * with large section links, the theme / sound / motion / résumé controls and direct contact links.
  */
-function MobileMenu({ active, dark, soundOn }: { active: string | null; dark: boolean; soundOn: boolean }) {
+function MobileMenu({ active, dark, soundOn, motionOn }: { active: string | null; dark: boolean; soundOn: boolean; motionOn: boolean }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [open, setOpen] = useState(false);
 
@@ -179,6 +191,10 @@ function MobileMenu({ active, dark, soundOn }: { active: string | null; dark: bo
             <button type="button" className="mobile-menu-control" onClick={() => void sound.setEnabled(!soundOn)}>
               Sound: {soundOn ? 'On' : 'Off'}
               <span className="sr-only">, turn interface sound {soundOn ? 'off' : 'on'}</span>
+            </button>
+            <button type="button" className="mobile-menu-control" onClick={() => motion.set(!motionOn)}>
+              Motion: {motionOn ? 'On' : 'Off'}
+              <span className="sr-only">, turn animation {motionOn ? 'off' : 'on'}</span>
             </button>
             <a href={site.resume} download className="mobile-menu-control">
               <Download size={14} />

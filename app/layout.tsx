@@ -5,6 +5,7 @@ import { ScrollReveal } from '@/components/portfolio/scroll-reveal';
 import { PortfolioHUD } from '@/components/portfolio/portfolio-hud';
 import { SiteFooter } from '@/components/portfolio/site-footer';
 import { site } from '@/data/site';
+import { motionScript } from '@/lib/motion';
 import { THEME_COLORS, themeScript } from '@/lib/theme';
 import './globals.css';
 
@@ -76,6 +77,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <head>
         {/* Applies the saved theme (or the system preference) before first paint. */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {/* Restores the visitor's Motion off choice before first paint. */}
+        <script dangerouslySetInnerHTML={{ __html: motionScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         {/*

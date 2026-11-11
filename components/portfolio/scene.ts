@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, type RefObject } from 'react';
+import { motion as motionPref } from '@/lib/motion';
 import { theme } from '@/lib/theme';
 
 /*
@@ -95,7 +96,7 @@ export type Frame = {
 /**
  * Runs `draw` on a canvas: DPR-aware sizing, a loop that only runs while the canvas is on screen
  * and the tab is visible, a start deferred until after load + idle (never competes with first
- * paint), and a single still frame under prefers-reduced-motion. Returns `invalidate`, which
+ * paint), and a single still frame when motion is reduced (system setting or the Motion switch). Returns `invalidate`, which
  * redraws a still scene (reduced motion) after something it shows has changed.
  */
 export function useScene(canvasRef: RefObject<HTMLCanvasElement | null>, draw: (frame: Frame) => void) {
@@ -111,9 +112,8 @@ export function useScene(canvasRef: RefObject<HTMLCanvasElement | null>, draw: (
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx) return;
 
-    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const lowPower = (navigator.hardwareConcurrency ?? 8) <= 4;
-    const frame: Frame = { ctx, w: 0, h: 0, t: 0, dt: 0, px: 0, py: 0, scroll: 0, enter: 0, reduced: motion.matches, compact: false, lowPower };
+    const frame: Frame = { ctx, w: 0, h: 0, t: 0, dt: 0, px: 0, py: 0, scroll: 0, enter: 0, reduced: motionPref.reduced(), compact: false, lowPower };
     let target = { x: 0, y: 0 };
     let started = false;
     let visible = false;
@@ -216,7 +216,8 @@ export function useScene(canvasRef: RefObject<HTMLCanvasElement | null>, draw: (
       };
     };
     const onMotion = () => {
-      frame.reduced = motion.matches;
+      frame.reduced = motionPref.reduced();
+      if (!frame.reduced) enterAt = -1;
       sync();
     };
 
@@ -243,7 +244,7 @@ export function useScene(canvasRef: RefObject<HTMLCanvasElement | null>, draw: (
 
     window.addEventListener('pointermove', onMove, { passive: true });
     document.addEventListener('visibilitychange', sync);
-    motion.addEventListener('change', onMotion);
+    const offMotion = motionPref.subscribe(onMotion);
     return () => {
       cancelAnimationFrame(raf);
       cancelAnimationFrame(resizeRaf);
@@ -254,7 +255,7 @@ export function useScene(canvasRef: RefObject<HTMLCanvasElement | null>, draw: (
       io.disconnect();
       window.removeEventListener('pointermove', onMove);
       document.removeEventListener('visibilitychange', sync);
-      motion.removeEventListener('change', onMotion);
+      offMotion();
       offTheme();
       invalidateRef.current = () => {};
     };

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useReducedMotion } from '@/lib/use-motion';
 
 /** Idle heading: the classic up-left pointer. */
 const REST_ANGLE = (-135 * Math.PI) / 180;
@@ -21,12 +22,13 @@ const MAGNET_MAX = 7;
  */
 export function CustomCursor() {
   const root = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
 
   useEffect(() => {
     const layer = root.current;
     if (!layer) return;
-    const query = window.matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)');
-    if (!query.matches) return;
+    const query = window.matchMedia('(hover: hover) and (pointer: fine)');
+    if (!query.matches || reduced) return;
 
     const html = document.documentElement;
     const arrow = layer.querySelector<HTMLElement>('[data-arrow]')!;
@@ -175,7 +177,7 @@ export function CustomCursor() {
       window.removeEventListener('blur', onLeave);
       window.removeEventListener('scroll', onScroll);
     };
-  }, []);
+  }, [reduced]);
 
   return (
     <div ref={root} aria-hidden="true" className="cursor-layer" data-visible="false">
